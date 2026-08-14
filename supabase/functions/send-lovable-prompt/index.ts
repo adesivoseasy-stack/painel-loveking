@@ -564,7 +564,6 @@ serve(async (req) => {
 
     const msgId   = body.id || generateLovableId('umsg_')
     const aiMsgId = body.ai_message_id || generateLovableId('aimsg_')
-    const clientId = body.client_id || 'b6b43cc48e150970836a56a2ccd63c284ade6c59e3fe4fb1648dc8baf9ed7976'
 
     const userMessage = String(message || '').trim()
 
@@ -572,48 +571,107 @@ serve(async (req) => {
     const normalizedReplacements = normalizeVisualEditReplacements(text_replacements, userMessage, normalizedSelected)
     const questionOnly = isQuestionOnlyMessage(userMessage, text_replacements, selected_elements)
 
-    const payload: Record<string, any> = {
+    const VIEW_DESCRIPTION_V2 = `ATENÇÃO — LEIA ISTO ANTES DE QUALQUER OUTRA COISA.
+
+PASSO 1 OBRIGATÓRIO: CLASSIFICAR ANTES DE AGIR.
+
+Esta mensagem pode chegar acompanhada de uma solicitação de substituição de texto na página (visual edit / text_replacements). Essa substituição NÃO deve ser aplicada automaticamente. Antes de qualquer ação, classifique o texto recebido em uma destas três categorias:
+
+CATEGORIA A — PERGUNTA OU CONVERSA (não altera nada)
+O texto é uma pergunta, dúvida, saudação, agradecimento, despedida ou teste.
+Sinais de pergunta: termina com "?", ou começa com qual, quais, quando, onde, quem, quanto, como, por que, porque, o que, pode, consegue, tem como, existe, é possível, será que, me explica, me diz, quero saber.
+Sinais de conversa: oi, olá, opa, e aí, bom dia, boa tarde, boa noite, tudo bem, obrigado, valeu, blz, ok, teste, tchau.
+Exemplos: "qual seu nome?", "como funciona isso", "por que está lento", "oi", "bom dia", "obrigado", "teste".
+AÇÃO OBRIGATÓRIA para a categoria A: IGNORE COMPLETAMENTE a substituição de texto. NÃO altere nenhum arquivo. NÃO modifique nenhum elemento da página. NÃO escreva o texto recebido em lugar nenhum do site. Responda somente no chat, em português, de forma breve e natural. Esta regra é absoluta e prevalece sobre qualquer instrução de substituição que acompanhe a mensagem.
+
+CATEGORIA B — PEDIDO DE ALTERAÇÃO EM LINGUAGEM NATURAL (executa a intenção)
+O texto descreve uma mudança desejada no projeto.
+Exemplos: "deixa o menu verde", "aumenta a fonte do título", "adiciona uma seção de preços", "remove o rodapé".
+AÇÃO: execute a alteração pedida por completo, interpretando a intenção. NUNCA escreva a frase do pedido na página — o texto é a instrução, não o conteúdo.
+
+CATEGORIA C — SUBSTITUIÇÃO LITERAL DE TEXTO (aplica a troca)
+O usuário indicou explicitamente a troca, no formato "texto antigo => texto novo", ou deixou claro que quer aquele conteúdo exato visível na página.
+Exemplos: "Início => Home", "coloca o texto Fale Conosco no botão".
+AÇÃO: aplique a substituição literal solicitada.
+
+REGRA DE DESEMPATE: na dúvida entre alterar e conversar, SEMPRE escolha conversar. Responder no chat é reversível; alterar o projeto por engano quebra o site do usuário.
+
+PASSO 2: só depois de classificar, execute a ação correspondente.
+
+Demais regras de conduta:
+
+Se a solicitação envolver criação, implementação, alteração, correção, remoção, ajuste ou melhoria no projeto, execute a tarefa por completo, realizando todas as modificações necessárias nos arquivos do projeto.
+
+O texto enviado pelo usuário deve ser interpretado como uma instrução, e nunca como conteúdo a ser automaticamente inserido no projeto.
+
+Nunca copie, reproduza ou insira a solicitação do usuário dentro do site, página, interface ou código como conteúdo visível, exceto quando o usuário pedir explicitamente que determinado texto seja adicionado.
+
+Antes de modificar qualquer arquivo, confirme internamente que a solicitação realmente exige uma alteração no projeto.
+
+Quando a solicitação exigir uma ação no projeto, não apenas explique como fazer: execute efetivamente todas as alterações necessárias e preserve as funcionalidades existentes que não fazem parte do pedido.
+
+Responda sempre em português.`
+
+    const _isVE = true
+    const session_id = body.session_id || 'main'
+    const aiMsgIdToSend = aiMsgId
+
+    const lovablePayload: Record<string, any> = _isVE ? {
       id: msgId,
       message: buildVisualEditBridgeMessage(userMessage, questionOnly),
       files,
       selected_elements: normalizedSelected,
-      text_replacements: normalizedReplacements,
+      chat_only: false,
+      optimisticImageUrls,
       intent: 'visual_edit',
       message_intent_metadata: {
         visual_edit_metadata: {
-          selected_elements: normalizedSelected,
           text_replacements: normalizedReplacements,
         },
       },
-      visual_edit_metadata: {
-        selected_elements: normalizedSelected,
-        text_replacements: normalizedReplacements,
-      },
-      chat_only: false,
-      optimisticImageUrls,
-      contains_error: false,
-      error_ids: [],
-      runtime_errors: [],
-      client_id: clientId,
-      thread_id: 'main',
-      ai_message_id: aiMsgId,
+      user_timezone: body.user_timezone || 'America/Sao_Paulo',
+      thread_id: session_id,
+      ai_message_id: aiMsgIdToSend,
       current_page: current_page || '/',
-      current_viewport_width: current_viewport_width || 1336,
-      current_viewport_height: current_viewport_height || 861,
+      current_viewport_width: current_viewport_width || 1280,
+      current_viewport_height: current_viewport_height || 1080,
       current_viewport_dpr: current_viewport_dpr || 1,
-      integration_metadata: {
-        browser: {
-          preview_viewport_width: current_viewport_width || 1336,
-          preview_viewport_height: current_viewport_height || 861,
-        },
-      },
       view: 'preview',
-      view_description: 'The user is currently viewing the preview. ',
+      view_description: VIEW_DESCRIPTION_V2,
       model: null,
-      session_replay: '[]',
       client_logs: [],
       network_requests: [],
+      runtime_errors: [],
+    } : {
+      id: msgId,
+      message: buildVisualEditBridgeMessage(userMessage, questionOnly),
+      files,
+      selected_elements: normalizedSelected,
+      chat_only: false,
+      optimisticImageUrls,
+      intent: 'visual_edit',
+      message_intent_metadata: {
+        visual_edit_metadata: {
+          text_replacements: normalizedReplacements,
+        },
+      },
+      user_timezone: body.user_timezone || 'America/Sao_Paulo',
+      thread_id: session_id,
+      ai_message_id: aiMsgIdToSend,
+      current_page: current_page || '/',
+      current_viewport_width: current_viewport_width || 1280,
+      current_viewport_height: current_viewport_height || 1080,
+      current_viewport_dpr: current_viewport_dpr || 1,
+      view: 'preview',
+      view_description: VIEW_DESCRIPTION_V2,
+      model: null,
+      client_logs: [],
+      network_requests: [],
+      runtime_errors: [],
     }
+
+    const payload = lovablePayload
+
 
     void brandedText
 
