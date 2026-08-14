@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=Cinzel:wght@400;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,95 +6,97 @@
 
 @layer base {
   :root {
-    --background: 240 15% 4%;
+    /* LoveKing Pro — Vermelho puro, sem laranja */
+    --background: 0 0% 4%;          /* Preto puro */
     --foreground: 0 0% 97%;
 
-    --card: 240 12% 8%;
+    --card: 0 0% 7%;
     --card-foreground: 0 0% 97%;
 
-    --popover: 240 12% 8%;
+    --popover: 0 0% 7%;
     --popover-foreground: 0 0% 97%;
 
-    --primary: 270 85% 60%;
+    --primary: 0 80% 50%;           /* Vermelho LoveKing */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 10% 12%;
+    --secondary: 0 0% 10%;
     --secondary-foreground: 0 0% 85%;
 
-    --muted: 240 10% 12%;
-    --muted-foreground: 240 5% 45%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 42%;
 
-    --accent: 280 90% 65%;
+    --accent: 0 70% 38%;            /* Vermelho escuro (sem laranja) */
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 50%;
+    --destructive: 0 80% 45%;
     --destructive-foreground: 0 0% 98%;
 
     --success: 152 55% 42%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 38 75% 50%;
-    --warning-foreground: 0 0% 100%;
+    --warning: 38 80% 50%;          /* Só em alertas de aviso */
+    --warning-foreground: 0 0% 5%;
 
-    --border: 240 10% 13%;
-    --input: 240 10% 13%;
-    --ring: 270 85% 60%;
+    --border: 0 0% 11%;
+    --input: 0 0% 11%;
+    --ring: 0 80% 50%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 240 15% 5%;
+    --sidebar-background: 0 0% 5%;
     --sidebar-foreground: 0 0% 88%;
-    --sidebar-primary: 270 85% 60%;
+    --sidebar-primary: 0 80% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 10% 12%;
+    --sidebar-accent: 0 0% 10%;
     --sidebar-accent-foreground: 0 0% 88%;
-    --sidebar-border: 240 10% 13%;
-    --sidebar-ring: 270 85% 60%;
+    --sidebar-border: 0 0% 11%;
+    --sidebar-ring: 0 80% 50%;
   }
 
   .dark {
-    --background: 240 15% 4%;
+    /* LoveKing Pro dark — Vermelho puro, sem laranja */
+    --background: 0 0% 4%;
     --foreground: 0 0% 97%;
 
-    --card: 240 12% 8%;
+    --card: 0 0% 7%;
     --card-foreground: 0 0% 97%;
 
-    --popover: 240 12% 8%;
+    --popover: 0 0% 7%;
     --popover-foreground: 0 0% 97%;
 
-    --primary: 270 85% 60%;
+    --primary: 0 80% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 10% 12%;
+    --secondary: 0 0% 10%;
     --secondary-foreground: 0 0% 85%;
 
-    --muted: 240 10% 12%;
-    --muted-foreground: 240 5% 45%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 42%;
 
-    --accent: 280 90% 65%;
+    --accent: 0 70% 38%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 50%;
+    --destructive: 0 80% 45%;
     --destructive-foreground: 0 0% 98%;
 
     --success: 152 55% 42%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 38 75% 50%;
-    --warning-foreground: 0 0% 100%;
+    --warning: 38 80% 50%;
+    --warning-foreground: 0 0% 5%;
 
-    --border: 240 10% 13%;
-    --input: 240 10% 13%;
-    --ring: 270 85% 60%;
+    --border: 0 0% 11%;
+    --input: 0 0% 11%;
+    --ring: 0 80% 50%;
 
-    --sidebar-background: 240 15% 5%;
+    --sidebar-background: 0 0% 5%;
     --sidebar-foreground: 0 0% 88%;
-    --sidebar-primary: 270 85% 60%;
+    --sidebar-primary: 0 80% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 10% 12%;
+    --sidebar-accent: 0 0% 10%;
     --sidebar-accent-foreground: 0 0% 88%;
-    --sidebar-border: 240 10% 13%;
-    --sidebar-ring: 270 85% 60%;
+    --sidebar-border: 0 0% 11%;
+    --sidebar-ring: 0 80% 50%;
   }
 }
 
@@ -117,7 +119,7 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.02em;
     font-weight: 700;
   }
 }
@@ -128,8 +130,9 @@
     letter-spacing: -0.03em;
   }
 
+  /* Gradiente texto: vermelho vivo */
   .text-gradient {
-    background: linear-gradient(135deg, hsl(270 90% 70%), hsl(280 85% 62%), hsl(295 80% 55%));
+    background: linear-gradient(135deg, hsl(0 85% 65%), hsl(0 75% 50%));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -142,21 +145,22 @@
     background-clip: text;
   }
 
+  /* Botões / backgrounds: vermelho puro */
   .bg-gradient {
-    background: linear-gradient(135deg, hsl(270 85% 55%), hsl(280 80% 50%), hsl(295 75% 45%));
+    background: linear-gradient(135deg, hsl(0 85% 48%), hsl(0 75% 40%));
   }
 
   .bg-gradient-subtle {
-    background: linear-gradient(135deg, hsl(270 90% 60% / 0.14), hsl(280 85% 55% / 0.10), hsl(295 80% 50% / 0.12));
+    background: linear-gradient(135deg, hsl(0 80% 50% / 0.12), hsl(0 70% 40% / 0.08));
   }
 
   .border-gradient {
-    border-image: linear-gradient(135deg, hsl(270 90% 65% / 0.4), hsl(280 85% 55% / 0.25), hsl(295 80% 50% / 0.35)) 1;
+    border-image: linear-gradient(135deg, hsl(0 80% 55% / 0.5), hsl(0 70% 42% / 0.3)) 1;
   }
 
   .glass-card {
     @apply bg-card/40 backdrop-blur-2xl border border-border/30;
-    box-shadow: 0 0 0 1px hsl(270 85% 60% / 0.08), 0 8px 40px -12px hsl(270 85% 60% / 0.18);
+    box-shadow: 0 0 0 1px hsl(0 80% 50% / 0.07), 0 8px 40px -12px hsl(0 80% 50% / 0.15);
   }
 
   .glass-card-hover {
@@ -164,8 +168,8 @@
   }
 
   .glass-card-hover:hover {
-    border-color: hsl(270 85% 60% / 0.35);
-    box-shadow: 0 0 0 1px hsl(270 85% 60% / 0.18), 0 12px 50px -12px hsl(280 85% 55% / 0.28);
+    border-color: hsl(0 80% 50% / 0.3);
+    box-shadow: 0 0 0 1px hsl(0 80% 50% / 0.15), 0 12px 50px -12px hsl(0 75% 45% / 0.25);
   }
 
   .glow-card {
@@ -178,15 +182,20 @@
     inset: 0;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(135deg, hsl(270 90% 65% / 0.35), transparent 40%, transparent 60%, hsl(295 80% 55% / 0.35));
+    background: linear-gradient(135deg, hsl(0 85% 60% / 0.4), transparent 50%, hsl(0 70% 45% / 0.3));
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     pointer-events: none;
   }
 
+  .king-glow {
+    box-shadow: 0 0 60px -12px hsl(0 80% 50% / 0.45), 0 0 100px -30px hsl(0 75% 42% / 0.2);
+  }
+
+  /* Alias para compat */
   .purple-glow {
-    box-shadow: 0 0 60px -12px hsl(270 85% 60% / 0.5), 0 0 120px -24px hsl(280 85% 55% / 0.28);
+    box-shadow: 0 0 60px -12px hsl(0 80% 50% / 0.45), 0 0 100px -30px hsl(0 75% 42% / 0.2);
   }
 
   .animate-fade-up {
@@ -285,11 +294,11 @@
   }
 
   @keyframes glow-pulse {
-    0%, 100% { 
-      box-shadow: 0 0 40px -10px hsl(270 85% 60% / 0.3);
+    0%, 100% {
+      box-shadow: 0 0 40px -10px hsl(0 80% 50% / 0.3);
     }
-    50% { 
-      box-shadow: 0 0 80px -10px hsl(280 85% 55% / 0.5);
+    50% {
+      box-shadow: 0 0 80px -10px hsl(0 80% 50% / 0.55);
     }
   }
 }
@@ -354,31 +363,34 @@
   transform: translateX(120%);
 }
 
+/* LoveKing CTA — Vermelho principal */
 .cta-purple {
   color: #fff;
-  background-image: linear-gradient(110deg, #8b5cf6 0%, #a855f7 35%, #ec4899 65%, #8b5cf6 100%);
-  box-shadow: 0 10px 30px -12px rgba(168, 85, 247, 0.55), inset 0 1px 0 rgba(255,255,255,0.18);
+  background-image: linear-gradient(110deg, #cc1a1a 0%, #e53535 50%, #cc1a1a 100%);
+  box-shadow: 0 10px 30px -12px rgba(204, 26, 26, 0.6), inset 0 1px 0 rgba(255,255,255,0.15);
 }
 .cta-purple:hover {
-  box-shadow: 0 18px 40px -12px rgba(236, 72, 153, 0.6), inset 0 1px 0 rgba(255,255,255,0.25);
+  box-shadow: 0 18px 40px -12px rgba(229, 53, 53, 0.65), inset 0 1px 0 rgba(255,255,255,0.22);
 }
 
+/* LoveKing CTA — Vermelho escuro */
 .cta-gold {
-  color: #0a0a0a;
-  background-image: linear-gradient(110deg, #facc15 0%, #f59e0b 35%, #16a34a 65%, #facc15 100%);
-  box-shadow: 0 10px 30px -12px rgba(250, 204, 21, 0.55), inset 0 1px 0 rgba(255,255,255,0.4);
+  color: #fff;
+  background-image: linear-gradient(110deg, #991b1b 0%, #b91c1c 50%, #991b1b 100%);
+  box-shadow: 0 10px 30px -12px rgba(153, 27, 27, 0.55), inset 0 1px 0 rgba(255,255,255,0.1);
 }
 .cta-gold:hover {
-  box-shadow: 0 18px 40px -12px rgba(22, 163, 74, 0.55), inset 0 1px 0 rgba(255,255,255,0.5);
+  box-shadow: 0 18px 40px -12px rgba(185, 28, 28, 0.6), inset 0 1px 0 rgba(255,255,255,0.18);
 }
 
+/* LoveKing CTA — Escarlate vivo */
 .cta-pink {
   color: #fff;
-  background-image: linear-gradient(110deg, #ec4899 0%, #d946ef 35%, #a855f7 65%, #ec4899 100%);
-  box-shadow: 0 10px 30px -12px rgba(236, 72, 153, 0.55), inset 0 1px 0 rgba(255,255,255,0.18);
+  background-image: linear-gradient(110deg, #e53535 0%, #cc1a1a 50%, #e53535 100%);
+  box-shadow: 0 10px 30px -12px rgba(229, 53, 53, 0.55), inset 0 1px 0 rgba(255,255,255,0.15);
 }
 .cta-pink:hover {
-  box-shadow: 0 18px 40px -12px rgba(168, 85, 247, 0.6), inset 0 1px 0 rgba(255,255,255,0.25);
+  box-shadow: 0 18px 40px -12px rgba(204, 26, 26, 0.65), inset 0 1px 0 rgba(255,255,255,0.22);
 }
 
 @media (prefers-reduced-motion: reduce) {

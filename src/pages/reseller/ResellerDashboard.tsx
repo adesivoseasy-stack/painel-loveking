@@ -30,6 +30,7 @@ import bannerMp4 from '@/assets/lov-banner.mp4.asset.json';
 import bannerWebm from '@/assets/lov-banner.webm.asset.json';
 import bannerPoster from '@/assets/lov-banner-poster.jpg.asset.json';
 import keyIcon from '@/assets/key-icon.webp';
+import lovekingBanner from '@/assets/reseller-banner.png';
 import comboBannerAsset from '@/assets/combo-300-creditos-pro-lite.png.asset.json';
 import comboChampionBannerAsset from '@/assets/combo-copa-brasil.png.asset.json';
 import comboAccountBanner from '@/assets/combo-conta-lovable.webp';
@@ -462,11 +463,11 @@ export default function ResellerDashboard() {
               <p className="text-xs sm:text-sm text-muted-foreground mt-2">Gerencie seu negócio de revenda</p>
             </div>
 
-            <div className="w-full max-w-3xl mx-auto rounded-2xl overflow-hidden glow-card purple-glow animate-fade-up-delay-1">
+            <div className="w-full max-w-3xl mx-auto rounded-2xl overflow-hidden glow-card king-glow animate-fade-up-delay-1">
               <img
-                className="w-full h-auto max-h-[280px] sm:max-h-[340px] object-cover block"
-                src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExcWQwcmZnOGprdnpocGpoczIwZm0zNTd1MHlxZjRsdGljemUyZDI0eCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/HdkfFLWKT8XeFz4v57/giphy.gif"
-                alt="LOV 3.0 Banner"
+                className="w-full h-auto block rounded-2xl"
+                src={lovekingBanner}
+                alt="LoveKing Pro Banner"
               />
             </div>
 

@@ -90,7 +90,7 @@ export function ResellerSidebar() {
 
         <div className="relative flex h-full flex-col">
           <div className="px-7 pt-8 pb-8">
-            <img src={logoImg} alt="Ilimitado" className="h-9 w-auto" />
+            <img src={logoImg} alt="LoveKing" className="h-9 w-auto" />
           </div>
 
           <div className="px-5 mb-5">

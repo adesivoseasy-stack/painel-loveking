@@ -121,7 +121,7 @@ export default function ResellerLanding() {
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/50">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <span className="text-lg font-semibold">Ilimitado <span className="text-gradient">Lov</span></span>
+          <span className="text-lg font-semibold">Love<span className="text-gradient">King</span></span>
           <div className="hidden md:flex items-center gap-8 text-sm">
             <button onClick={() => scrollToSection('benefits')} className="text-muted-foreground hover:text-foreground transition-colors">
               Benefícios
@@ -157,7 +157,7 @@ export default function ResellerLanding() {
           <h1 className="animate-fade-up-delay-1 text-5xl md:text-7xl font-semibold tracking-tight mb-6 leading-tight">
             Lucre revendendo
             <br />
-            <span className="text-gradient">Ilimitado Lov</span>
+            <span className="text-gradient">LoveKing</span>
           </h1>
 
           <p className="animate-fade-up-delay-2 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
@@ -439,7 +439,7 @@ export default function ResellerLanding() {
             Pronto para <span className="text-gradient">lucrar</span>?
           </h2>
           <p className="text-muted-foreground mb-10 max-w-lg mx-auto">
-            Junte-se aos revendedores que já estão construindo uma fonte de renda recorrente com o Ilimitado Lov.
+            Junte-se aos revendedores que já estão construindo uma fonte de renda recorrente com o LoveKing.
           </p>
           <Button
             onClick={() => navigate('/reseller/register')}
@@ -470,9 +470,9 @@ export default function ResellerLanding() {
       {/* Footer */}
       <footer className="py-12 px-6 border-t border-border/50">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <span className="text-lg font-semibold opacity-60">Ilimitado Lov</span>
+          <span className="text-lg font-semibold opacity-60">LoveKing</span>
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Ilimitado Lov • Todos os direitos reservados
+            © {new Date().getFullYear()} LoveKing • Todos os direitos reservados
           </p>
         </div>
       </footer>

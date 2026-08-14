@@ -41,7 +41,7 @@ export default function ResetLicenca() {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden flex items-center justify-center px-4 py-12">
       <Helmet>
-        <title>Resetar Licença — Ilimitado Lov</title>
+        <title>Resetar Licença — LoveKing</title>
         <meta name="description" content="Resete o dispositivo vinculado à sua licença para usar em outro computador." />
       </Helmet>
 
@@ -57,12 +57,12 @@ export default function ResetLicenca() {
           <div className="flex items-center justify-center gap-3 mb-6">
             <img
               src={logo}
-              alt="Ilimitado Lov"
+              alt="LoveKing"
               className="shrink-0 object-contain"
               style={{ width: "132px", height: "auto", maxWidth: "42vw", aspectRatio: "1745 / 608" }}
             />
             <div className="text-lg font-semibold">
-              Ilimitado <span className="text-primary">Lov</span>
+              Love<span className="text-primary">King</span>
             </div>
           </div>
 

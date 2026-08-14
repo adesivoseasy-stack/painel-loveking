@@ -19,21 +19,22 @@ const DEFAULT_TEMPLATE = `<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ilimitado Lov - Remote UI</title>
+<title>LoveKing - Remote UI</title>
 <style>
 :root {
-  --bg: #000000;
-  --bg-secondary: #0a0a0a;
-  --bg-tertiary: #111111;
-  --bg-input: #1c1c1e;
-  --border: rgba(139,92,246,0.12);
-  --border-focus: rgba(139,92,246,0.4);
+  --bg: #0a0202;
+  --bg-secondary: #0f0303;
+  --bg-tertiary: #160404;
+  --bg-input: #1e0a0a;
+  --border: rgba(220,38,38,0.12);
+  --border-focus: rgba(220,38,38,0.4);
   --text: #f5f5f7;
   --text-secondary: rgba(255,255,255,0.55);
   --text-muted: rgba(255,255,255,0.3);
-  --accent: #8B5CF6;
-  --accent-hover: #A78BFA;
-  --accent-glow: rgba(139,92,246,0.15);
+  --accent: #dc2626;
+  --accent-hover: #ef4444;
+  --accent-glow: rgba(220,38,38,0.15);
+  --gold: #f59e0b;
   --green: #30D158;
   --red: #FF453A;
   --radius: 12px;
@@ -41,7 +42,7 @@ const DEFAULT_TEMPLATE = `<!DOCTYPE html>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 *::-webkit-scrollbar { width: 3px; }
 *::-webkit-scrollbar-track { background: transparent; }
-*::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.15); border-radius: 10px; }
+*::-webkit-scrollbar-thumb { background: rgba(220,38,38,0.15); border-radius: 10px; }
 body {
   background: var(--bg);
   color: var(--text);
@@ -54,7 +55,7 @@ body {
 .header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 10px 12px;
-  background: linear-gradient(180deg, rgba(139,92,246,0.08) 0%, var(--bg-secondary) 100%);
+  background: linear-gradient(180deg, rgba(220,38,38,0.08) 0%, var(--bg-secondary) 100%);
   border-bottom: 1px solid var(--border);
   backdrop-filter: blur(20px);
 }
@@ -483,7 +484,7 @@ body {
     </div>
   </div>
 </div>
-<div class="powered-by">Powered by Ilimitado Lov</div>
+<div class="powered-by">Powered by LoveKing</div>
 <script src="remote-ui.js"><\/script>
 </body>
 </html>`;

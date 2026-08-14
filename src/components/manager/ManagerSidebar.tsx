@@ -64,7 +64,7 @@ export function ManagerSidebar() {
           <div className="px-5 pt-6 pb-5">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <img src={logoImg} alt="Ilimitado" className="relative h-8 w-auto" />
+                <img src={logoImg} alt="LoveKing" className="relative h-8 w-auto" />
               </div>
             </div>
             <div className="mt-4 h-px bg-gradient-to-r from-primary/20 via-border/40 to-transparent" />
