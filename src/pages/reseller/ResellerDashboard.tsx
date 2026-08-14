@@ -30,7 +30,8 @@ import bannerMp4 from '@/assets/lov-banner.mp4.asset.json';
 import bannerWebm from '@/assets/lov-banner.webm.asset.json';
 import bannerPoster from '@/assets/lov-banner-poster.jpg.asset.json';
 import keyIcon from '@/assets/key-icon.webp';
-import lovekingBanner from '@/assets/reseller-banner.png';
+import lovekingBanner from '@/assets/loveking-banner-admin.png';
+import lovekingBannerReseller from '@/assets/reseller-banner.png';
 import comboBannerAsset from '@/assets/combo-300-creditos-pro-lite.png.asset.json';
 import comboChampionBannerAsset from '@/assets/combo-copa-brasil.png.asset.json';
 import comboAccountBanner from '@/assets/combo-conta-lovable.webp';
@@ -457,18 +458,22 @@ export default function ResellerDashboard() {
         {/* Header & Stats */}
         {(
           <>
-            <div className="animate-fade-up">
-              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-primary mb-2 font-display">Painel de Revenda</p>
-              <h1 className="text-3xl sm:text-5xl font-black text-gradient-white font-display leading-[1.1]">Revendedor</h1>
-              <p className="text-xs sm:text-sm text-muted-foreground mt-2">Gerencie seu negócio de revenda</p>
-            </div>
-
-            <div className="w-full max-w-3xl mx-auto rounded-2xl overflow-hidden glow-card king-glow animate-fade-up-delay-1">
+            {/* ── BANNER + HEADER REDESENHADO ── */}
+            <div className="relative w-full rounded-3xl overflow-hidden shadow-2xl shadow-primary/20 animate-fade-up-delay-1">
               <img
-                className="w-full h-auto block rounded-2xl"
-                src={lovekingBanner}
-                alt="LoveKing Pro Banner"
+                src={lovekingBannerReseller}
+                alt="LoveKing Pro"
+                className="w-full h-auto block max-h-[220px] sm:max-h-[280px] object-cover"
               />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/20 to-transparent flex flex-col justify-end p-5 sm:p-7">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" /><span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" /></span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Painel de Revenda</span>
+                </div>
+                <h1 className="text-2xl sm:text-4xl font-black text-white leading-tight">Revendedor</h1>
+                <p className="text-xs text-white/50 mt-1">Gerencie seu negócio de revenda</p>
+              </div>
+            </div>
             </div>
 
             <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4 animate-fade-up-delay-2">

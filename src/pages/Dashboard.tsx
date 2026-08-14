@@ -1,22 +1,19 @@
 import { AdminLayout } from '@/components/admin/AdminLayout';
-import { useLicenseStats, useLicenses, useWildcardUsage, useWildcardStats } from '@/hooks/useLicenses';
-import { Card, CardContent } from '@/components/ui/card';
-import { Key, CheckCircle, XCircle, Ban, DollarSign, Globe, Users, TrendingUp, Activity, ArrowUpRight } from 'lucide-react';
-import bannerMp4 from '@/assets/lov-banner.mp4.asset.json';
-import bannerWebm from '@/assets/lov-banner.webm.asset.json';
-import bannerPoster from '@/assets/lov-banner-poster.jpg.asset.json';
+import { useLicenseStats, useLicenses, useWildcardUsage } from '@/hooks/useLicenses';
+import { Key, CheckCircle, XCircle, Ban, DollarSign, Globe, Activity, Crown, TrendingUp, Clock } from 'lucide-react';
+import lovekingBanner from '@/assets/loveking-banner-admin.png';
 import { format, differenceInDays, parseISO, formatDistanceToNow, subDays, eachDayOfInterval } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { GitHubCalendar } from '@/components/ui/git-hub-calendar';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
+import { motion } from 'framer-motion';
 
 export default function Dashboard() {
   const { data: stats, isLoading: statsLoading } = useLicenseStats();
   const { data: licenses, isLoading: licensesLoading } = useLicenses();
-  const { data: wildcardUsage, isLoading: wildcardLoading } = useWildcardUsage();
-  const { data: wildcardStats } = useWildcardStats();
+  const { data: wildcardUsage } = useWildcardUsage();
 
   const { data: dailyCounts } = useQuery({
     queryKey: ['activity-daily-counts'],
@@ -68,228 +65,191 @@ export default function Dashboard() {
     return daysUntilExpiry <= 7 && daysUntilExpiry >= 0;
   }) || [];
 
-  const recentLicenses = licenses?.slice(0, 5) || [];
-  const recentWildcardUsage = wildcardUsage?.slice(0, 10) || [];
+  const recentLicenses = licenses?.slice(0, 6) || [];
+  const recentWildcardUsage = wildcardUsage?.slice(0, 8) || [];
+
+  const statCards = [
+    { label: 'Total', value: stats?.total ?? '—', icon: Key, color: 'text-foreground', bg: 'bg-white/5', border: 'border-white/10' },
+    { label: 'Ativas', value: stats?.active ?? '—', icon: CheckCircle, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
+    { label: 'Expiradas', value: stats?.expired ?? '—', icon: XCircle, color: 'text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20' },
+    { label: 'Revogadas', value: stats?.revoked ?? '—', icon: Ban, color: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20' },
+    { label: 'Receita', value: stats ? `R$ ${stats.revenue.toFixed(0)}` : '—', icon: DollarSign, color: 'text-primary', bg: 'bg-primary/10', border: 'border-primary/20' },
+  ];
 
   return (
     <AdminLayout>
-      <div className="space-y-6 sm:space-y-8 px-1 sm:px-0">
-        {/* Hero Header */}
-        <div className="animate-fade-up pt-14 lg:pt-0">
-          <div className="mb-6 sm:mb-8">
-            <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-primary mb-2 sm:mb-3 font-display">Painel de Controle</p>
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-gradient-white font-display leading-[1.1]">
+      <div className="space-y-6 px-1 sm:px-0 pt-14 lg:pt-0">
+
+        {/* ── BANNER HERO ── */}
+        <motion.div
+          initial={{ opacity: 0, y: -16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="relative w-full rounded-3xl overflow-hidden shadow-2xl shadow-primary/20"
+        >
+          <img
+            src={lovekingBanner}
+            alt="LoveKing Pro"
+            className="w-full h-auto block max-h-[260px] sm:max-h-[320px] object-cover"
+          />
+          {/* Overlay com info */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-transparent to-transparent flex flex-col justify-end p-6 sm:p-8">
+            <div className="flex items-center gap-2 mb-2">
+              <Crown className="h-4 w-4 text-primary" />
+              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary">Painel de Controle</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-black text-white leading-tight">
               Dashboard
             </h1>
-            <p className="text-base text-muted-foreground mt-3 max-w-md">
-              Visão geral completa do seu sistema de licenças e métricas.
-            </p>
+            <p className="text-sm text-white/60 mt-1">Visão geral do sistema LoveKing Pro</p>
           </div>
+        </motion.div>
 
-          {/* Banner */}
-          <div className="w-full max-w-3xl mx-auto rounded-2xl overflow-hidden border border-border/20 glow-card purple-glow">
-            <img
-              className="w-full h-auto max-h-[280px] sm:max-h-[340px] object-cover block"
-              src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExcWQwcmZnOGprdnpocGpoczIwZm0zNTd1MHlxZjRsdGljemUyZDI0eCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/HdkfFLWKT8XeFz4v57/giphy.gif"
-              alt="LOV 3.0 Banner"
-            />
+        {/* ── STATS ROW ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3"
+        >
+          {statCards.map((card, i) => (
+            <div
+              key={card.label}
+              className={`relative rounded-2xl border ${card.border} ${card.bg} backdrop-blur-sm p-4 sm:p-5 overflow-hidden group hover:scale-[1.02] transition-transform duration-200`}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">{card.label}</span>
+                <card.icon className={`h-4 w-4 ${card.color} opacity-70`} />
+              </div>
+              <p className={`text-2xl sm:text-3xl font-black tabular-nums ${card.color}`}>
+                {statsLoading ? '—' : card.value}
+              </p>
+              {/* linha decorativa */}
+              <div className={`absolute bottom-0 left-0 right-0 h-[2px] ${card.bg} opacity-50`} />
+            </div>
+          ))}
+        </motion.div>
+
+        {/* ── ATIVIDADE ── */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="glass-card rounded-2xl p-5 sm:p-6"
+        >
+          <div className="flex items-center gap-3 mb-5">
+            <div className="h-9 w-9 rounded-xl bg-primary/10 border border-primary/15 flex items-center justify-center">
+              <Activity className="h-4 w-4 text-primary" />
+            </div>
+            <div>
+              <h2 className="text-sm font-bold text-foreground">Atividade</h2>
+              <p className="text-[10px] text-muted-foreground">últimos 365 dias</p>
+            </div>
           </div>
-        </div>
-
-        {/* Stats Grid */}
-        <div className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 animate-fade-up-delay-1">
-          <StatCard label="Total" value={statsLoading ? '—' : stats?.total} icon={Key} />
-          <StatCard label="Ativas" value={statsLoading ? '—' : stats?.active} icon={CheckCircle} color="text-success" glowColor="hsl(152 55% 42%)" />
-          <StatCard label="Expiradas" value={statsLoading ? '—' : stats?.expired} icon={XCircle} color="text-warning" glowColor="hsl(38 75% 50%)" />
-          <StatCard label="Revogadas" value={statsLoading ? '—' : stats?.revoked} icon={Ban} color="text-destructive" glowColor="hsl(0 62.8% 50%)" />
-          <StatCard label="Receita" value={statsLoading ? '—' : `R$ ${stats?.revenue.toFixed(0)}`} icon={DollarSign} color="text-primary" glowColor="hsl(265 80% 55%)" />
-        </div>
-
-        {/* Activity Calendar */}
-        <GlassSection icon={Activity} title="Atividade" subtitle="últimos 365 dias" className="animate-fade-up-delay-2">
           <div className="overflow-x-auto scrollbar-none">
-            <GitHubCalendar 
+            <GitHubCalendar
               data={contributionData}
-              colors={["hsl(var(--muted))", "#9b6dff", "#8b5cf6", "#7c3aed", "#6d28d9"]}
+              colors={["hsl(var(--muted))", "hsl(0 60% 30%)", "hsl(0 70% 40%)", "hsl(0 78% 48%)", "hsl(0 85% 58%)"]}
             />
           </div>
-        </GlassSection>
+        </motion.div>
 
-        {/* Wildcard Stats */}
-        {wildcardStats && (wildcardStats.totalIPs > 0 || wildcardStats.totalMessages > 0) && (
-          <div className="grid gap-4 grid-cols-2 animate-fade-up-delay-2">
-            <StatCard label="IPs Coringa" value={wildcardStats.totalIPs} icon={Globe} />
-            <StatCard label="Mensagens" value={wildcardStats.totalMessages} icon={Users} />
-          </div>
-        )}
-
-        <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2 animate-fade-up-delay-2 min-w-0">
-          {/* Wildcard Usage */}
-          <GlassSection icon={Globe} title="Chave Coringa" badge={`${recentWildcardUsage.length}`}>
-            {wildcardLoading ? (
-              <LoadingText />
-            ) : recentWildcardUsage.length === 0 ? (
-              <EmptyState icon={Globe} message="Nenhum uso registrado" />
-            ) : (
-              <div className="space-y-2 max-h-[360px] overflow-y-auto overflow-x-hidden scrollbar-none min-w-0">
-                {recentWildcardUsage.map((usage) => (
-                  <ListRow key={usage.id}>
-                    <div className="space-y-0.5 min-w-0 flex-1">
-                      <code className="block font-mono text-[11px] sm:text-[13px] font-semibold text-foreground break-all sm:break-normal">{usage.ip_address}</code>
-                      <p className="text-[10px] sm:text-[11px] text-muted-foreground">
-                        {formatDistanceToNow(parseISO(usage.last_used_at), { addSuffix: true, locale: ptBR })}
-                      </p>
-                    </div>
-                    <span className="text-xs font-bold tabular-nums text-primary font-display shrink-0">
-                      {usage.message_count}
-                    </span>
-                  </ListRow>
-                ))}
+        {/* ── GRID: Wildcards + Expirando + Recentes ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="grid grid-cols-1 lg:grid-cols-3 gap-4"
+        >
+          {/* Chave Coringa */}
+          <div className="glass-card rounded-2xl overflow-hidden">
+            <div className="flex items-center gap-3 p-5 border-b border-border/20">
+              <div className="h-8 w-8 rounded-xl bg-primary/10 border border-primary/10 flex items-center justify-center">
+                <Globe className="h-4 w-4 text-primary" />
               </div>
-            )}
-          </GlassSection>
-
-          {/* Expiring Soon */}
-          <GlassSection icon={XCircle} title="Expirando" badge={`${expiringLicenses.length}`} iconColor="text-warning">
-            {licensesLoading ? (
-              <LoadingText />
-            ) : expiringLicenses.length === 0 ? (
-              <EmptyState icon={CheckCircle} message="Nenhuma licença expirando" color="text-success/30" />
-            ) : (
-              <div className="space-y-2 min-w-0">
-                {expiringLicenses.map((license) => {
-                  const daysLeft = differenceInDays(parseISO(license.expires_at), new Date());
-                  return (
-                    <ListRow key={license.id}>
-                      <div className="min-w-0 flex-1">
-                        <p className="font-mono text-[11px] sm:text-[13px] font-semibold text-foreground truncate">{license.license_key.slice(0, 16)}...</p>
-                        <p className="text-[10px] sm:text-[11px] text-muted-foreground truncate">{license.email}</p>
-                      </div>
-                      <span className={`text-[10px] sm:text-xs font-black px-2.5 sm:px-3 py-1.5 rounded-xl font-display shrink-0 ${
-                        daysLeft <= 1 
-                          ? 'bg-destructive/15 text-destructive border border-destructive/20' 
-                          : 'bg-warning/15 text-warning border border-warning/20'
-                      }`}>
-                        {daysLeft === 0 ? 'HOJE' : `${daysLeft}D`}
-                      </span>
-                    </ListRow>
-                  );
-                })}
-              </div>
-            )}
-          </GlassSection>
-        </div>
-
-        {/* Recent Licenses */}
-        <GlassSection icon={Key} title="Licenças Recentes" className="animate-fade-up-delay-3">
-          {licensesLoading ? (
-            <LoadingText />
-          ) : recentLicenses.length === 0 ? (
-            <EmptyState icon={Key} message="Nenhuma licença encontrada" />
-          ) : (
-            <div className="space-y-2">
-              {recentLicenses.map((license) => (
-                <ListRow key={license.id}>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-mono text-[11px] sm:text-[13px] font-semibold text-foreground truncate">{license.license_key}</p>
-                    <p className="text-[10px] sm:text-[11px] text-muted-foreground truncate">{license.email}</p>
+              <h2 className="text-sm font-bold text-foreground flex-1">Chave Coringa</h2>
+              <span className="text-[10px] font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-lg border border-primary/10">
+                {recentWildcardUsage.length}
+              </span>
+            </div>
+            <div className="p-4 space-y-2 max-h-[280px] overflow-y-auto scrollbar-none">
+              {recentWildcardUsage.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">Nenhum uso registrado</p>
+              ) : recentWildcardUsage.map((u) => (
+                <div key={u.id} className="flex items-center justify-between rounded-xl border border-border/15 bg-background/20 px-3 py-2.5 hover:bg-primary/[0.04] transition-colors">
+                  <div>
+                    <code className="text-[11px] font-mono font-semibold text-foreground">{u.ip_address}</code>
+                    <p className="text-[10px] text-muted-foreground">{formatDistanceToNow(parseISO(u.last_used_at), { addSuffix: true, locale: ptBR })}</p>
                   </div>
-                  <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-                    <StatusBadge status={license.status} />
-                    <span className="text-[10px] sm:text-[11px] text-muted-foreground tabular-nums hidden sm:inline font-display">
-                      {format(parseISO(license.created_at), 'dd/MM/yy', { locale: ptBR })}
-                    </span>
-                  </div>
-                </ListRow>
+                  <span className="text-xs font-black text-primary">{u.message_count}</span>
+                </div>
               ))}
             </div>
-          )}
-        </GlassSection>
+          </div>
+
+          {/* Expirando em breve */}
+          <div className="glass-card rounded-2xl overflow-hidden">
+            <div className="flex items-center gap-3 p-5 border-b border-border/20">
+              <div className="h-8 w-8 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
+                <Clock className="h-4 w-4 text-yellow-400" />
+              </div>
+              <h2 className="text-sm font-bold text-foreground flex-1">Expirando em Breve</h2>
+              <span className="text-[10px] font-bold text-yellow-400 bg-yellow-500/10 px-2.5 py-1 rounded-lg border border-yellow-500/20">
+                {expiringLicenses.length}
+              </span>
+            </div>
+            <div className="p-4 space-y-2 max-h-[280px] overflow-y-auto scrollbar-none">
+              {expiringLicenses.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">✅ Nenhuma expirando</p>
+              ) : expiringLicenses.map((l) => {
+                const daysLeft = differenceInDays(parseISO(l.expires_at), new Date());
+                return (
+                  <div key={l.id} className="flex items-center justify-between rounded-xl border border-border/15 bg-background/20 px-3 py-2.5 hover:bg-yellow-500/[0.04] transition-colors">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-mono text-[11px] font-semibold text-foreground truncate">{l.license_key.slice(0, 16)}...</p>
+                      <p className="text-[10px] text-muted-foreground truncate">{l.email}</p>
+                    </div>
+                    <span className={`text-[10px] font-black px-2.5 py-1 rounded-lg ml-2 ${daysLeft <= 1 ? 'bg-red-500/15 text-red-400 border border-red-500/20' : 'bg-yellow-500/15 text-yellow-400 border border-yellow-500/20'}`}>
+                      {daysLeft === 0 ? 'HOJE' : `${daysLeft}D`}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Licenças Recentes */}
+          <div className="glass-card rounded-2xl overflow-hidden">
+            <div className="flex items-center gap-3 p-5 border-b border-border/20">
+              <div className="h-8 w-8 rounded-xl bg-primary/10 border border-primary/10 flex items-center justify-center">
+                <TrendingUp className="h-4 w-4 text-primary" />
+              </div>
+              <h2 className="text-sm font-bold text-foreground flex-1">Licenças Recentes</h2>
+            </div>
+            <div className="p-4 space-y-2 max-h-[280px] overflow-y-auto scrollbar-none">
+              {licensesLoading ? (
+                <p className="text-sm text-muted-foreground py-8 text-center">Carregando...</p>
+              ) : recentLicenses.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">Nenhuma licença</p>
+              ) : recentLicenses.map((l) => (
+                <div key={l.id} className="flex items-center justify-between rounded-xl border border-border/15 bg-background/20 px-3 py-2.5 hover:bg-primary/[0.04] transition-colors">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-mono text-[11px] font-semibold text-foreground truncate">{l.license_key}</p>
+                    <p className="text-[10px] text-muted-foreground truncate">{l.email}</p>
+                  </div>
+                  <span className={`ml-2 shrink-0 text-[10px] font-black px-2 py-1 rounded-lg border ${
+                    l.status === 'active' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20' :
+                    l.status === 'expired' ? 'bg-yellow-500/15 text-yellow-400 border-yellow-500/20' :
+                    'bg-red-500/15 text-red-400 border-red-500/20'
+                  }`}>
+                    {l.status === 'active' ? 'ATIVA' : l.status === 'expired' ? 'EXP' : 'REV'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
       </div>
     </AdminLayout>
-  );
-}
-
-/* ─── Sub-components ─── */
-
-function GlassSection({ icon: Icon, title, subtitle, badge, children, className, iconColor = 'text-primary' }: {
-  icon: any; title: string; subtitle?: string; badge?: string; children: React.ReactNode; className?: string; iconColor?: string;
-}) {
-  return (
-    <div className={`glass-card rounded-2xl overflow-hidden min-w-0 ${className || ''}`}>
-      <div className="p-4 sm:p-6 pb-0 flex items-center justify-between gap-3 min-w-0">
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/10 shrink-0">
-            <Icon className={`h-4 w-4 ${iconColor}`} />
-          </div>
-          <div className="min-w-0">
-            <h2 className="text-xs sm:text-sm font-bold text-foreground font-display truncate">{title}</h2>
-            {subtitle && <p className="text-[10px] text-muted-foreground truncate">{subtitle}</p>}
-          </div>
-        </div>
-        {badge && (
-          <span className="text-[10px] sm:text-[11px] font-bold text-primary bg-primary/10 px-2.5 sm:px-3 py-1.5 rounded-xl border border-primary/10 font-display shrink-0">
-            {badge}
-          </span>
-        )}
-      </div>
-      <div className="p-4 sm:p-6 min-w-0">{children}</div>
-    </div>
-  );
-}
-
-function ListRow({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex items-center justify-between rounded-xl border border-border/20 bg-background/20 px-3 sm:px-4 py-3 hover:bg-primary/[0.03] hover:border-primary/10 transition-all duration-200 gap-2 sm:gap-3 group min-w-0 overflow-hidden">
-      {children}
-    </div>
-  );
-}
-
-function EmptyState({ icon: Icon, message, color = 'text-muted-foreground/20' }: { icon: any; message: string; color?: string }) {
-  return (
-    <div className="text-center py-12">
-      <Icon className={`h-10 w-10 ${color} mx-auto mb-4`} />
-      <p className="text-sm text-muted-foreground font-display">{message}</p>
-    </div>
-  );
-}
-
-function LoadingText() {
-  return <p className="text-sm text-muted-foreground font-display">Carregando...</p>;
-}
-
-function StatCard({ label, value, icon: Icon, color, glowColor }: { label: string; value: any; icon: any; color?: string; glowColor?: string }) {
-  return (
-    <div className="glass-card-hover rounded-2xl overflow-hidden relative group">
-      {/* Top accent line */}
-      <div 
-        className="absolute top-0 left-0 right-0 h-[2px] opacity-60 group-hover:opacity-100 transition-opacity"
-        style={{ background: glowColor || 'hsl(265 80% 55%)' }}
-      />
-      <div className="p-3.5 sm:p-5">
-        <div className="flex items-center justify-between mb-3 sm:mb-4">
-          <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground font-display truncate">{label}</span>
-          <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-primary/[0.06] group-hover:bg-primary/10 transition-colors duration-300">
-            <Icon className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${color || 'text-primary'}`} />
-          </div>
-        </div>
-        <p className={`text-2xl sm:text-3xl lg:text-4xl font-black tabular-nums tracking-tight font-display ${color || 'text-foreground'}`}>{value}</p>
-      </div>
-    </div>
-  );
-}
-
-function StatusBadge({ status }: { status: string }) {
-  const config = {
-    active: { label: 'ATIVA', className: 'bg-success/15 text-success border-success/20' },
-    expired: { label: 'EXP', className: 'bg-warning/15 text-warning border-warning/20' },
-    revoked: { label: 'REV', className: 'bg-destructive/15 text-destructive border-destructive/20' },
-  }[status] || { label: status, className: 'bg-muted text-muted-foreground border-border' };
-
-  return (
-    <span className={`rounded-lg border px-2.5 py-1 text-[10px] font-black font-display ${config.className}`}>
-      {config.label}
-    </span>
   );
 }
