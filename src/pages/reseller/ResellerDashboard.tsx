@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+﻿import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ResellerLayout } from '@/components/reseller/ResellerLayout';
 import { useResellerStats, useResellerLicenses, useResellerCreateLicense, useUpdateCustomerName } from '@/hooks/useResellerLicenses';
@@ -636,72 +636,67 @@ export default function ResellerDashboard() {
                 </div>
 
                 {/* Lifetime Key */}
-                <div className="relative">
-                  <div
-                    className="absolute -inset-[2px] rounded-[1.3rem] z-0 animate-pulse opacity-90"
-                    style={{
-                      background: 'linear-gradient(135deg, #f59e0b, #ef4444, #ec4899, #a855f7)',
-                      backgroundSize: '300% 300%',
-                      animation: 'fire-glow 3s ease infinite',
-                    }}
-                  />
-                  <div className="relative p-6 sm:p-7 rounded-3xl bg-card border border-transparent z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
-                    <div className="flex items-start gap-4">
-                      <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-amber-500/20 to-rose-500/20 flex items-center justify-center shrink-0">
-                        <img src={keyIcon} alt="Chave VitalÃ­cia" className="h-[44px] w-[44px] object-contain" />
+                <div className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0a0a0a]">
+                  {/* Left red accent bar */}
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary/80 via-primary to-primary/40" />
+                  {/* Background glow */}
+                  <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-gradient-to-l from-primary/[0.04] to-transparent pointer-events-none" />
+
+                  <div className="pl-6 pr-5 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+                    {/* Left: info */}
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                      <div className="h-12 w-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                        <img src={keyIcon} alt="Vitalícia" className="h-8 w-8 object-contain" />
                       </div>
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
                           {isLifetimePromoActive ? (
-                            <span className="bg-gradient-to-r from-amber-500 to-rose-500 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider animate-pulse">
-                              âš¡ PROMOÃ‡ÃƒO RELÃ‚MPAGO
+                            <span className="bg-primary/20 text-primary border border-primary/30 text-[9px] font-black uppercase tracking-[0.15em] px-2 py-0.5 rounded-md animate-pulse">
+                              ⚡ Promoção
                             </span>
                           ) : (
-                            <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                              Exclusivo
+                            <span className="bg-white/[0.06] text-white/50 border border-white/10 text-[9px] font-black uppercase tracking-[0.15em] px-2 py-0.5 rounded-md">
+                              Premium
                             </span>
                           )}
-                          <span className="text-[10px] font-bold text-purple-300 uppercase tracking-wider">Validade âˆž</span>
+                          <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.15em]">∞ Vitalícia</span>
                         </div>
-                        <h3 className="text-xl sm:text-2xl font-black text-foreground font-display">
-                          Chave <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">VitalÃ­cia</span>
-                        </h3>
-                        <p className="text-sm text-muted-foreground mt-1 max-w-md">
-                          1 chave com validade ilimitada para o cliente final. Venda como produto premium.
-                        </p>
+                        <h3 className="text-lg sm:text-xl font-black text-white">Chave <span className="text-primary">Vitalícia</span></h3>
+                        <p className="text-xs text-white/40 mt-0.5 max-w-sm">1 chave com validade ilimitada — produto premium para revenda.</p>
                         {isLifetimePromoActive && !['wallacesouzasantos@gmail.com','ecombrunobp@gmail.com','techmind.pro4.0@gmail.com'].includes(user?.email?.toLowerCase() ?? '') && (
-                          <p className="text-xs font-bold text-pink-300 mt-2 flex items-center gap-1.5">
-                            <Clock className="h-3.5 w-3.5" />
-                            AtÃ© amanhÃ£ Ã s 20h â€¢ Termina em <span className="font-mono text-pink-200">{lifetimePromoTimeLeft}</span>
+                          <p className="text-[11px] font-bold text-primary mt-1.5 flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            Termina em <span className="font-mono">{lifetimePromoTimeLeft}</span>
                           </p>
                         )}
                       </div>
                     </div>
-                    <div className="flex flex-col items-stretch sm:items-end gap-2 w-full sm:w-auto">
-                      <div className="text-right">
-                        {isLifetimePromoActive ? (
-                          <>
-                            <div className="flex items-baseline gap-2 justify-end">
-                              <span className="text-sm text-muted-foreground line-through">R$ 147,90</span>
-                              <span className="text-3xl font-black bg-gradient-to-r from-pink-400 to-red-400 bg-clip-text text-transparent">{['wallacesouzasantos@gmail.com','ecombrunobp@gmail.com','techmind.pro4.0@gmail.com'].includes(user?.email?.toLowerCase() ?? '') ? 'R$ 29,90' : `R$ ${Number(vitaliciaPromo?.price || 59.90).toFixed(2).replace('.', ',')}`}</span>
-                            </div>
-                            <p className="text-[11px] text-pink-300 font-bold">{['wallacesouzasantos@gmail.com','ecombrunobp@gmail.com','techmind.pro4.0@gmail.com'].includes(user?.email?.toLowerCase() ?? '') ? 'economize R$ 118,00' : `economize R$ ${(147.90 - Number(vitaliciaPromo?.price || 59.90)).toFixed(2).replace('.', ',')}`}</p>
-                          </>
-                        ) : (
-                          <>
-                            <span className="text-3xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">{['wallacesouzasantos@gmail.com','ecombrunobp@gmail.com','techmind.pro4.0@gmail.com'].includes(user?.email?.toLowerCase() ?? '') ? 'R$ 29,90' : 'R$ 147,90'}</span>
-                            <p className="text-[11px] text-muted-foreground">pagamento Ãºnico</p>
-                          </>
-                        )}
-                      </div>
+
+                    {/* Right: price + button */}
+                    <div className="flex flex-col items-stretch sm:items-end gap-3 w-full sm:w-auto shrink-0">
+                      {isLifetimePromoActive ? (
+                        <div className="sm:text-right">
+                          <p className="text-xs text-white/30 line-through">R$ 147,90</p>
+                          <p className="text-2xl font-black text-primary">
+                            {['wallacesouzasantos@gmail.com','ecombrunobp@gmail.com','techmind.pro4.0@gmail.com'].includes(user?.email?.toLowerCase() ?? '') ? 'R$ 29,90' : `R$ ${Number(vitaliciaPromo?.price || 59.90).toFixed(2).replace('.', ',')}`}
+                          </p>
+                          <p className="text-[10px] text-primary/70 font-bold">pagamento único</p>
+                        </div>
+                      ) : (
+                        <div className="sm:text-right">
+                          <p className="text-2xl font-black text-white">
+                            {['wallacesouzasantos@gmail.com','ecombrunobp@gmail.com','techmind.pro4.0@gmail.com'].includes(user?.email?.toLowerCase() ?? '') ? 'R$ 29,90' : 'R$ 147,90'}
+                          </p>
+                          <p className="text-[10px] text-white/30">pagamento único</p>
+                        </div>
+                      )}
                       <Button
                         disabled={loadingQty !== null}
                         onClick={handleBuyLifetime}
-                        className="group relative overflow-hidden rounded-xl bg-[linear-gradient(110deg,#a855f7,45%,#ec4899,55%,#a855f7)] bg-[length:200%_100%] text-white font-bold shadow-lg shadow-purple-500/30 w-full sm:w-auto transition-all duration-300 hover:scale-[1.04] hover:shadow-pink-500/50 active:scale-95 animate-[gradient-x_3s_ease_infinite]"
+                        className="bg-primary hover:bg-primary/90 text-white font-bold rounded-xl h-10 px-6 shadow-lg shadow-primary/30 transition-all hover:scale-[1.02] active:scale-95"
                       >
-                        <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:animate-[shimmer_1.2s_ease-in-out]" />
-                        {loadingQty === -2 ? <Loader2 className="relative mr-2 h-4 w-4 animate-spin" /> : <Zap className="relative mr-2 h-4 w-4 animate-pulse" />}
-                        <span className="relative">{loadingQty === -2 ? 'Gerando PIX...' : 'Comprar VitalÃ­cia'}</span>
+                        {loadingQty === -2 ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Zap className="mr-2 h-4 w-4" />}
+                        {loadingQty === -2 ? 'Gerando PIX...' : 'Adquirir Agora'}
                       </Button>
                     </div>
                   </div>
@@ -709,63 +704,59 @@ export default function ResellerDashboard() {
 
                 {/* Lifetime Bulk 10 keys */}
                 {bulkPromo && (
-                <div className="relative">
-                  <div
-                    className="absolute -inset-[2px] rounded-[1.3rem] z-0 animate-pulse opacity-90"
-                    style={{
-                      background: 'linear-gradient(135deg, #a855f7, #ec4899, #f59e0b, #a855f7)',
-                      backgroundSize: '300% 300%',
-                      animation: 'fire-glow 3s ease infinite',
-                    }}
-                  />
-                  <div className="relative p-6 sm:p-7 rounded-3xl bg-card border border-transparent z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
-                    <div className="flex items-start gap-4">
-                      <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-amber-500/20 flex items-center justify-center shrink-0">
-                        <img src={keyIcon} alt="10 Chaves VitalÃ­cias" className="h-[44px] w-[44px] object-contain" />
+                <div className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0a0a0a]">
+                  {/* Left accent — slightly different shade */}
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-white/20 via-primary/60 to-primary/20" />
+                  <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-gradient-to-l from-primary/[0.03] to-transparent pointer-events-none" />
+
+                  {/* "Melhor custo" tag */}
+                  <div className="absolute top-4 right-4">
+                    <span className="bg-primary/15 text-primary border border-primary/20 text-[9px] font-black uppercase tracking-[0.15em] px-2 py-1 rounded-md">
+                      Melhor custo
+                    </span>
+                  </div>
+
+                  <div className="pl-6 pr-5 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                      <div className="relative h-12 w-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                        <img src={keyIcon} alt="10 Vitalícias" className="h-8 w-8 object-contain" />
+                        <span className="absolute -top-1.5 -right-1.5 bg-primary text-white text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center">10</span>
                       </div>
-                      <div>
-                        <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          <span className="bg-gradient-to-r from-purple-500 to-amber-500 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider animate-pulse">
-                            âš¡ PROMOÃ‡ÃƒO RELÃ‚MPAGO
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="bg-primary/20 text-primary border border-primary/30 text-[9px] font-black uppercase tracking-[0.15em] px-2 py-0.5 rounded-md animate-pulse">
+                            ⚡ Promoção
                           </span>
-                          <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                            MAIS ECONÃ”MICA
-                          </span>
-                          <span className="text-[10px] font-bold text-purple-300 uppercase tracking-wider">Validade âˆž</span>
+                          <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.15em]">∞ Vitalícias</span>
                         </div>
-                        <h3 className="text-xl sm:text-2xl font-black text-foreground font-display">
-                          10 Chaves <span className="bg-gradient-to-r from-purple-400 to-amber-400 bg-clip-text text-transparent">VitalÃ­cias</span>
-                        </h3>
-                        <p className="text-sm text-muted-foreground mt-1 max-w-md">
-                          Pacote com 10 chaves de validade ilimitada por apenas R$ 22,99 cada. Estoque premium para vender em escala.
-                        </p>
-                        <p className="text-xs font-bold text-amber-300 mt-2 flex items-center gap-1.5">
-                          <Clock className="h-3.5 w-3.5" />
-                          AtÃ© amanhÃ£ Ã s 20h â€¢ Termina em <span className="font-mono text-amber-200">{lifetimePromoTimeLeft}</span>
+                        <h3 className="text-lg sm:text-xl font-black text-white">10 Chaves <span className="text-primary">Vitalícias</span></h3>
+                        <p className="text-xs text-white/40 mt-0.5 max-w-sm">Pacote com 10 chaves ilimitadas — estoque premium para revender em escala.</p>
+                        <p className="text-[11px] font-bold text-primary mt-1.5 flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          Termina em <span className="font-mono">{lifetimePromoTimeLeft}</span>
                         </p>
                       </div>
                     </div>
-                    <div className="flex flex-col items-stretch sm:items-end gap-2 w-full sm:w-auto">
-                      <div className="text-right">
-                        <div className="flex items-baseline gap-2 justify-end">
-                          <span className="text-sm text-muted-foreground line-through">R$ 799,90</span>
-                          <span className="text-3xl font-black bg-gradient-to-r from-amber-400 to-rose-400 bg-clip-text text-transparent">R$ {Number(bulkPromo?.price || 229.90).toFixed(2).replace('.', ',')}</span>
-                        </div>
-                        <p className="text-[11px] text-amber-500 font-bold">R$ {(Number(bulkPromo?.price || 229.90) / 10).toFixed(2).replace('.', ',')} por chave</p>
+
+                    <div className="flex flex-col items-stretch sm:items-end gap-3 w-full sm:w-auto shrink-0">
+                      <div className="sm:text-right">
+                        <p className="text-xs text-white/30 line-through">R$ 799,90</p>
+                        <p className="text-2xl font-black text-primary">R$ {Number(bulkPromo?.price || 229.90).toFixed(2).replace('.', ',')}</p>
+                        <p className="text-[10px] text-white/30">R$ {(Number(bulkPromo?.price || 229.90) / 10).toFixed(2).replace('.', ',')} por chave</p>
                       </div>
                       <Button
                         disabled={loadingQty !== null}
                         onClick={handleBuyLifetimeBulk}
-                        className="group relative overflow-hidden rounded-xl bg-[linear-gradient(110deg,#a855f7,45%,#f59e0b,55%,#a855f7)] bg-[length:200%_100%] text-white font-bold shadow-lg shadow-purple-500/30 w-full sm:w-auto transition-all duration-300 hover:scale-[1.04] hover:shadow-amber-500/50 active:scale-95 animate-[gradient-x_3s_ease_infinite]"
+                        className="bg-primary hover:bg-primary/90 text-white font-bold rounded-xl h-10 px-6 shadow-lg shadow-primary/30 transition-all hover:scale-[1.02] active:scale-95"
                       >
-                        <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:animate-[shimmer_1.2s_ease-in-out]" />
-                        {loadingQty === -7 ? <Loader2 className="relative mr-2 h-4 w-4 animate-spin" /> : <Zap className="relative mr-2 h-4 w-4 animate-pulse" />}
-                        <span className="relative">{loadingQty === -7 ? 'Gerando PIX...' : 'Comprar 10 VitalÃ­cias'}</span>
+                        {loadingQty === -7 ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Zap className="mr-2 h-4 w-4" />}
+                        {loadingQty === -7 ? 'Gerando PIX...' : 'Comprar Pacote'}
                       </Button>
                     </div>
                   </div>
                 </div>
                 )}
+
 
                 {/* Custom quantity */}
                 <div className="p-6 rounded-2xl glass-card">
