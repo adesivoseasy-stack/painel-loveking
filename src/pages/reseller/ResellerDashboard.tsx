@@ -474,7 +474,6 @@ export default function ResellerDashboard() {
                 <p className="text-xs text-white/50 mt-1">Gerencie seu negócio de revenda</p>
               </div>
             </div>
-            </div>
 
             <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4 animate-fade-up-delay-2">
               <StatCard
