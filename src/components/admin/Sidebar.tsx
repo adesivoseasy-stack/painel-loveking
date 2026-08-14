@@ -1,49 +1,47 @@
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
 import {
-  LogOut,
-  Menu,
-  X,
-  LayoutDashboard,
-  KeyRound,
-  Users,
-  Blocks,
-  Download,
-  Settings,
-  Code,
-  Shield,
-  BarChart3,
-  Coins,
-  Megaphone,
-  Settings2,
-  ShieldAlert,
-  FolderGit2,
-  Flame,
-  Tag,
+  LogOut, Menu, X, LayoutDashboard, KeyRound, Users, Blocks, Download,
+  Settings, Code, Shield, BarChart3, Coins, Megaphone, Settings2,
+  ShieldAlert, FolderGit2, Flame, Tag, ChevronRight, Crown,
 } from 'lucide-react';
 import logoImg from '@/assets/logo.webp';
 import { useState } from 'react';
 
-const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/licenses', label: 'Licenças', icon: KeyRound },
-  { href: '/customers', label: 'Clientes', icon: Users },
-  { href: '/resellers', label: 'Revendedores', icon: Users },
-  { href: '/managers', label: 'Gerentes', icon: Shield },
-  { href: '/templates', label: 'Templates', icon: Blocks },
-  { href: '/extension', label: 'Extensão', icon: Download },
-  { href: '/extension-front', label: 'Front', icon: Code },
-  { href: '/settings', label: 'Configurações', icon: Settings },
-  { href: '/token-metrics', label: 'Tokens', icon: BarChart3 },
-  { href: '/admin/lvb-credits', label: 'LVB Credits', icon: Coins },
-  { href: '/admin/creditos-config', label: 'Créditos /creditos', icon: Settings2 },
-  { href: '/admin/remarketing', label: 'Remarketing', icon: Megaphone },
-  { href: '/admin/ip-audit', label: 'Auditoria IP', icon: ShieldAlert },
-  { href: '/admin/project-audit', label: 'Auditoria Projetos', icon: FolderGit2 },
-  { href: '/admin/desconto-progressivo', label: 'Desconto Comunidade', icon: Flame },
-  { href: '/admin/promocoes', label: 'Promoções', icon: Tag },
+const navGroups = [
+  {
+    label: 'Principal',
+    items: [
+      { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+      { href: '/licenses', label: 'Licenças', icon: KeyRound },
+      { href: '/customers', label: 'Clientes', icon: Users },
+    ],
+  },
+  {
+    label: 'Gestão',
+    items: [
+      { href: '/resellers', label: 'Revendedores', icon: Users },
+      { href: '/managers', label: 'Gerentes', icon: Shield },
+      { href: '/templates', label: 'Templates', icon: Blocks },
+      { href: '/admin/desconto-progressivo', label: 'Desc. Comunidade', icon: Flame },
+      { href: '/admin/promocoes', label: 'Promoções', icon: Tag },
+    ],
+  },
+  {
+    label: 'Sistema',
+    items: [
+      { href: '/extension', label: 'Extensão', icon: Download },
+      { href: '/extension-front', label: 'Front', icon: Code },
+      { href: '/settings', label: 'Configurações', icon: Settings },
+      { href: '/token-metrics', label: 'Tokens', icon: BarChart3 },
+      { href: '/admin/lvb-credits', label: 'LVB Credits', icon: Coins },
+      { href: '/admin/creditos-config', label: 'Créditos', icon: Settings2 },
+      { href: '/admin/remarketing', label: 'Remarketing', icon: Megaphone },
+      { href: '/admin/ip-audit', label: 'Auditoria IP', icon: ShieldAlert },
+      { href: '/admin/project-audit', label: 'Auditoria Projetos', icon: FolderGit2 },
+    ],
+  },
 ];
 
 export function Sidebar() {
@@ -56,105 +54,122 @@ export function Sidebar() {
       {/* Mobile trigger */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-5 left-5 z-50 lg:hidden p-3 rounded-2xl bg-card/80 backdrop-blur-2xl border border-primary/10 shadow-2xl shadow-primary/10 hover:border-primary/20 transition-all duration-300"
+        className="fixed top-4 left-4 z-50 lg:hidden p-2.5 rounded-xl bg-background/90 backdrop-blur-xl border border-primary/15 shadow-xl shadow-black/30"
       >
         {isOpen ? <X className="h-4 w-4 text-foreground" /> : <Menu className="h-4 w-4 text-foreground" />}
       </button>
 
       {/* Overlay */}
       {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/80 backdrop-blur-md z-40 lg:hidden"
-          onClick={() => setIsOpen(false)}
-        />
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 lg:hidden" onClick={() => setIsOpen(false)} />
       )}
 
-      <aside
-        className={cn(
-          'fixed left-0 top-0 z-40 h-screen w-[270px] transition-transform duration-300 ease-out',
-          'lg:translate-x-0',
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        )}
-      >
-        {/* Sidebar background */}
-        <div className="absolute inset-0 bg-background border-r border-border/30" />
-        
-        {/* Purple ambient glow */}
-        <div className="absolute top-0 left-0 w-full h-[300px] bg-gradient-to-b from-primary/[0.04] to-transparent pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-full h-[200px] bg-gradient-to-t from-primary/[0.02] to-transparent pointer-events-none" />
+      <aside className={cn(
+        'fixed left-0 top-0 z-40 h-screen w-[260px] transition-transform duration-300 ease-out',
+        'lg:translate-x-0',
+        isOpen ? 'translate-x-0' : '-translate-x-full'
+      )}>
+        {/* Background */}
+        <div className="absolute inset-0 bg-[#0a0a0a] border-r border-white/[0.05]" />
+
+        {/* Linha vermelha lateral esquerda */}
+        <div className="absolute left-0 top-0 w-[2px] h-full bg-gradient-to-b from-transparent via-primary/60 to-transparent" />
+
+        {/* Glow topo */}
+        <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-b from-primary/[0.06] to-transparent pointer-events-none" />
 
         <div className="relative flex h-full flex-col">
-          {/* Logo */}
-          <div className="px-7 pt-8 pb-8">
-            <img src={logoImg} alt="LoveKing" className="h-9 w-auto" />
+
+          {/* Logo area */}
+          <div className="px-5 pt-6 pb-5">
+            <div className="flex items-center gap-3">
+              <img src={logoImg} alt="LoveKing" className="h-10 w-auto" />
+            </div>
+            {/* Divisor com glow */}
+            <div className="mt-5 h-px bg-gradient-to-r from-primary/40 via-primary/10 to-transparent" />
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 space-y-1 overflow-y-auto scrollbar-none">
-            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground/60 px-3 mb-3">Menu</p>
-            {navItems.map((item) => {
-              const isActive = location.pathname === item.href;
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className={cn(
-                    'group relative flex items-center gap-3.5 rounded-xl px-3.5 py-3 text-[13px] font-medium transition-all duration-200',
-                    isActive
-                      ? 'text-primary-foreground'
-                      : 'text-muted-foreground hover:text-foreground'
-                  )}
-                >
-                  {isActive && (
-                    <>
-                      <div className="absolute inset-0 bg-gradient rounded-xl shadow-lg shadow-primary/30 animate-[pulse_2.5s_ease-in-out_infinite]" />
-                      <div className="absolute inset-0 rounded-xl overflow-hidden">
-                        <div className="absolute inset-y-0 -left-1/2 w-1/2 bg-gradient-to-r from-transparent via-white/25 to-transparent animate-shimmer" />
-                      </div>
-                    </>
-                  )}
+          <nav className="flex-1 px-3 overflow-y-auto scrollbar-none space-y-5">
+            {navGroups.map((group) => (
+              <div key={group.label}>
+                <p className="text-[9px] font-black uppercase tracking-[0.25em] text-white/20 px-3 mb-2">
+                  {group.label}
+                </p>
+                <div className="space-y-0.5">
+                  {group.items.map((item) => {
+                    const isActive = location.pathname === item.href;
+                    const Icon = item.icon;
+                    return (
+                      <Link
+                        key={item.href}
+                        to={item.href}
+                        onClick={() => setIsOpen(false)}
+                        className={cn(
+                          'group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-medium transition-all duration-200',
+                          isActive
+                            ? 'text-white'
+                            : 'text-white/40 hover:text-white/80'
+                        )}
+                      >
+                        {/* Active background */}
+                        {isActive && (
+                          <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary to-primary/70 shadow-lg shadow-primary/25" />
+                        )}
 
-                  {!isActive && (
-                    <div className="absolute inset-0 rounded-xl bg-transparent group-hover:bg-primary/[0.06] transition-colors duration-200" />
-                  )}
+                        {/* Hover background */}
+                        {!isActive && (
+                          <div className="absolute inset-0 rounded-xl bg-transparent group-hover:bg-white/[0.04] transition-colors duration-200" />
+                        )}
 
-                  <Icon className={cn(
-                    'relative h-[18px] w-[18px] shrink-0 transition-all duration-300',
-                    isActive
-                      ? 'group-hover:scale-110 group-hover:-rotate-6'
-                      : 'group-hover:text-primary group-hover:scale-110'
-                  )} />
-                  <span className="relative truncate font-display transition-transform duration-300 group-hover:translate-x-0.5">{item.label}</span>
-                </Link>
-              );
-            })}
+                        {/* Left accent for active */}
+                        {isActive && (
+                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-white/50 rounded-full -translate-x-3" />
+                        )}
+
+                        <Icon className={cn(
+                          'relative h-[16px] w-[16px] shrink-0 transition-all duration-200',
+                          isActive ? 'text-white' : 'text-white/30 group-hover:text-white/70'
+                        )} />
+                        <span className="relative flex-1 truncate text-[12.5px] tracking-wide">{item.label}</span>
+                        {isActive && (
+                          <ChevronRight className="relative h-3 w-3 text-white/50 shrink-0" />
+                        )}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </nav>
 
           {/* User footer */}
-          <div className="p-5 space-y-4">
-            <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent" />
-            <div className="flex items-center gap-3 px-3">
-              <div className="h-9 w-9 rounded-xl bg-gradient flex items-center justify-center shrink-0 shadow-lg shadow-primary/20">
-                <span className="text-sm font-bold text-primary-foreground font-display">
+          <div className="p-3 pt-4">
+            <div className="h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent mb-4" />
+
+            {/* User card */}
+            <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 mb-2 flex items-center gap-3">
+              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shrink-0 shadow-md shadow-primary/30">
+                <span className="text-[13px] font-black text-white">
                   {user?.email?.charAt(0).toUpperCase()}
                 </span>
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-[12px] font-semibold text-foreground/90 truncate font-display">{user?.email?.split('@')[0]}</p>
-                <p className="text-[10px] text-muted-foreground">Admin</p>
+                <p className="text-[12px] font-bold text-white/90 truncate">{user?.email?.split('@')[0]}</p>
+                <div className="flex items-center gap-1 mt-0.5">
+                  <Crown className="h-2.5 w-2.5 text-primary" />
+                  <p className="text-[9px] font-bold uppercase tracking-wider text-primary">Admin</p>
+                </div>
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-full justify-start text-[13px] text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-10 rounded-xl transition-all duration-200 font-display"
+
+            <button
               onClick={signOut}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[12px] font-medium text-white/30 hover:text-red-400 hover:bg-red-500/[0.08] transition-all duration-200"
             >
-              <LogOut className="mr-3 h-4 w-4" />
-              Sair
-            </Button>
+              <LogOut className="h-3.5 w-3.5" />
+              <span>Sair da conta</span>
+            </button>
           </div>
         </div>
       </aside>

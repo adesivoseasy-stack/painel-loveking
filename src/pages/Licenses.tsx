@@ -16,6 +16,7 @@ import { Key, MoreHorizontal, Ban, Trash2, RotateCcw, Copy, RefreshCw, Plus, Cal
 import { Switch } from '@/components/ui/switch';
 import { format, parseISO, formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import lovekingBanner from '@/assets/loveking-banner-admin.png';
 
 export default function Licenses() {
   const { data: licenses, isLoading } = useLicenses();
@@ -122,12 +123,17 @@ export default function Licenses() {
     <AdminLayout>
       <div className="space-y-8 px-1 sm:px-0 pt-14 lg:pt-0">
         {/* Banner */}
-        <div className="w-full rounded-2xl overflow-hidden glow-card purple-glow animate-fade-up">
+        <div className="relative w-full rounded-3xl overflow-hidden shadow-2xl shadow-primary/20 animate-fade-up">
           <img
-            src="https://ccqesqhkqbnnwmowrghj.supabase.co/storage/v1/object/public/public-assets/extension-banner.png?v=4"
-            alt="Banner"
-            className="w-full h-auto object-cover"
+            src={lovekingBanner}
+            alt="LoveKing Pro"
+            className="w-full h-auto block max-h-[200px] sm:max-h-[260px] object-cover"
           />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/20 to-transparent flex flex-col justify-end p-5 sm:p-7">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary mb-1">Gestão</p>
+            <h1 className="text-2xl sm:text-4xl font-black text-white leading-tight">Licenças</h1>
+            <p className="text-xs text-white/50 mt-1">Gerencie suas licenças de software</p>
+          </div>
         </div>
 
         {/* Header */}
