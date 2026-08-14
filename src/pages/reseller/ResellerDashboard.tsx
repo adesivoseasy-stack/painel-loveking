@@ -156,8 +156,8 @@ export default function ResellerDashboard() {
   const [deadlineCountdown, setDeadlineCountdown] = useState('');
 
   useEffect(() => {
-    // Promoção de Inauguração: 10 chaves por R$249,90
-    // Janela: 19/05/2026 16:20 BRT até 20/05/2026 16:20 BRT
+    // PromoÃ§Ã£o de InauguraÃ§Ã£o: 10 chaves por R$249,90
+    // Janela: 19/05/2026 16:20 BRT atÃ© 20/05/2026 16:20 BRT
     const PROMO_START = new Date('2026-05-19T16:20:00-03:00');
     const PROMO_END = new Date('2026-05-20T16:20:00-03:00');
     const checkPromo = () => {
@@ -304,7 +304,7 @@ export default function ResellerDashboard() {
     } else {
       toast({
         title: 'Erro',
-        description: pixError || 'Não foi possível gerar o PIX.',
+        description: pixError || 'NÃ£o foi possÃ­vel gerar o PIX.',
         variant: 'destructive',
       });
     }
@@ -365,7 +365,7 @@ export default function ResellerDashboard() {
 
   const handleCopyKey = (key: string) => {
     navigator.clipboard.writeText(key);
-    toast({ title: 'Copiado!', description: 'Chave copiada para a área de transferência.' });
+    toast({ title: 'Copiado!', description: 'Chave copiada para a Ã¡rea de transferÃªncia.' });
   };
 
   const handleSaveCustomerName = async () => {
@@ -396,7 +396,7 @@ export default function ResellerDashboard() {
 
   const getEffectivePrice = (qty: number): number => {
     if (!isPricingReady) return 0;
-    // Promoção relâmpago mensal: 1 chave por R$ 34,90 até 04/06/2026 às 20h
+    // PromoÃ§Ã£o relÃ¢mpago mensal: 1 chave por R$ 34,90 atÃ© 04/06/2026 Ã s 20h
     const MONTHLY_PROMO_END = new Date('2026-06-04T20:00:00-03:00').getTime();
     if (qty === 1 && Date.now() < MONTHLY_PROMO_END) {
       return 34.90;
@@ -431,7 +431,7 @@ export default function ResellerDashboard() {
     { id: 'loja' as TabId, label: 'Loja', icon: ShoppingCart, disabled: false },
     { id: 'clientes' as TabId, label: 'Meus Clientes', icon: Users, disabled: false },
     { id: 'estoque' as TabId, label: 'Meu Estoque', icon: Package, disabled: false },
-    { id: 'creditos_lovable' as TabId, label: 'Créditos Lovable', icon: Coins, disabled: LVB_CREDITS_MAINTENANCE },
+    { id: 'creditos_lovable' as TabId, label: 'CrÃ©ditos Lovable', icon: Coins, disabled: LVB_CREDITS_MAINTENANCE },
   ];
 
   return (
@@ -442,7 +442,7 @@ export default function ResellerDashboard() {
           <Alert className="border-destructive/30 bg-destructive/10 rounded-2xl backdrop-blur-sm">
             <AlertTriangle className="h-4 w-4 text-destructive" />
             <AlertDescription className="text-destructive font-medium flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 font-display text-xs sm:text-sm">
-              <span>⚠️ Você precisa ter pelo menos 1 chave ativa para manter seu acesso.</span>
+              <span>âš ï¸ VocÃª precisa ter pelo menos 1 chave ativa para manter seu acesso.</span>
               <span className="font-mono text-xs sm:text-sm bg-destructive/20 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl whitespace-nowrap font-black">{deadlineCountdown}</span>
             </AlertDescription>
           </Alert>
@@ -451,14 +451,14 @@ export default function ResellerDashboard() {
           <Alert className="border-destructive/30 bg-destructive/10 rounded-2xl backdrop-blur-sm">
             <Lock className="h-4 w-4 text-destructive" />
             <AlertDescription className="text-destructive font-medium font-display">
-              🚨 <strong>Atenção:</strong> Sua conta será bloqueada sem chaves ativas. Adquira pelo menos 1 licença.
+              ðŸš¨ <strong>AtenÃ§Ã£o:</strong> Sua conta serÃ¡ bloqueada sem chaves ativas. Adquira pelo menos 1 licenÃ§a.
             </AlertDescription>
           </Alert>
         )}
         {/* Header & Stats */}
         {(
           <>
-            {/* ── BANNER + HEADER REDESENHADO ── */}
+            {/* â”€â”€ BANNER + HEADER REDESENHADO â”€â”€ */}
             <div className="relative w-full rounded-3xl overflow-hidden shadow-2xl shadow-primary/20 animate-fade-up-delay-1">
               <img
                 src={lovekingBannerReseller}
@@ -471,35 +471,35 @@ export default function ResellerDashboard() {
                   <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Painel de Revenda</span>
                 </div>
                 <h1 className="text-2xl sm:text-4xl font-black text-white leading-tight">Revendedor</h1>
-                <p className="text-xs text-white/50 mt-1">Gerencie seu negócio de revenda</p>
+                <p className="text-xs text-white/50 mt-1">Gerencie seu negÃ³cio de revenda</p>
               </div>
             </div>
 
             <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4 animate-fade-up-delay-2">
               <StatCard
-                label="Saldo Disponível"
-                value={statsLoading ? '—' : `R$ ${((stats?.revenue || 0)).toFixed(2)}`}
+                label="Saldo DisponÃ­vel"
+                value={statsLoading ? 'â€”' : `R$ ${((stats?.revenue || 0)).toFixed(2)}`}
                 sub="Lucro acumulado"
                 icon={DollarSign}
               />
               <StatCard
                 label="Total Vendas"
-                value={statsLoading ? '—' : `R$ ${((stats?.revenue || 0)).toFixed(2)}`}
+                value={statsLoading ? 'â€”' : `R$ ${((stats?.revenue || 0)).toFixed(2)}`}
                 sub="Faturamento total registrado"
                 icon={DollarSign}
               />
               <StatCard
                 label="Clientes Ativos"
-                value={statsLoading ? '—' : stats?.active || 0}
-                sub="Licenças ativas"
+                value={statsLoading ? 'â€”' : stats?.active || 0}
+                sub="LicenÃ§as ativas"
                 icon={Users}
               />
               <StatCard
                 label="Chaves em Estoque"
-                value={isUnlimited ? '∞' : `${credits?.credits_used || 0}`}
-                sub2={isUnlimited ? '∞' : `${availableCredits}`}
+                value={isUnlimited ? 'âˆž' : `${credits?.credits_used || 0}`}
+                sub2={isUnlimited ? 'âˆž' : `${availableCredits}`}
                 sub={isUnlimited ? 'Plano Ilimitado' : 'Utilizadas'}
-                sub2Label={isUnlimited ? 'Sem limite' : 'Disponíveis para venda'}
+                sub2Label={isUnlimited ? 'Sem limite' : 'DisponÃ­veis para venda'}
                 icon={Key}
               />
             </div>
@@ -528,7 +528,7 @@ export default function ResellerDashboard() {
                 {tab.disabled && (
                   <span className="hidden sm:inline-flex items-center gap-1 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-2 py-0.5 text-[10px] font-bold text-yellow-500">
                     <AlertTriangle className="h-3 w-3" />
-                    Manutenção
+                    ManutenÃ§Ã£o
                   </span>
                 )}
               </button>
@@ -559,463 +559,79 @@ export default function ResellerDashboard() {
                     Crie quantas chaves quiser sem custo adicional por chave.
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Vá até a aba <span className="font-medium text-foreground">Meu Estoque</span> para gerar novas chaves.
+                    VÃ¡ atÃ© a aba <span className="font-medium text-foreground">Meu Estoque</span> para gerar novas chaves.
                   </p>
                 </div>
               </div>
             ) : (
               <>
-                {/* Key Tiers */}
-                <div>
-                  <h2 className="text-2xl font-black text-foreground flex items-center gap-3 mb-1 font-display">
-                    <ShoppingCart className="h-5 w-5 text-primary" />
-                    Comprar <span className="text-gradient">Chaves</span>
-                  </h2>
-                  <p className="text-sm text-muted-foreground mb-5 font-display">
-                    {isPricingReady
-                      ? `Plano R$ ${planType}${customKeyPrice ? ` — R$ ${customKeyPrice.toFixed(2)}/key` : ' — Acima de 3 chaves, desconto fixo de 5%.'}`
-                      : 'Carregando preços do seu plano...'}
-                  </p>
+              <div>
+                <h2 className="text-2xl font-black text-foreground flex items-center gap-3 mb-1 font-display">
+                  <ShoppingCart className="h-5 w-5 text-primary" />
+                  Comprar <span className="text-gradient">Chaves</span>
+                </h2>
+                <p className="text-sm text-muted-foreground mb-5 font-display">
+                  {isPricingReady
+                    ? `Plano R$ ${planType}${customKeyPrice ? ` â€” R$ ${customKeyPrice.toFixed(2)}/key` : ' â€” Acima de 3 chaves, desconto fixo de 5%.'}`
+                    : 'Carregando preÃ§os do seu plano...'}
+                </p>
 
-                  <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-                    {(isPricingReady ? (pricingPlans || []) : []).map((tier, index) => {
-                      const effectivePrice = customKeyPrice != null && customKeyPrice > 0 ? customKeyPrice : tier.pricePerKey;
-                      const total = tier.quantity * effectivePrice;
-                      const basePrice = customKeyPrice != null && customKeyPrice > 0 ? customKeyPrice : (pricingPlans?.[0]?.pricePerKey || effectivePrice);
-                      const discount = basePrice > effectivePrice ? Math.round((1 - effectivePrice / basePrice) * 100) : 0;
-                      const isSelected = selectedTier === index;
-                      const isBestSeller = tier.quantity === 2;
-                      return (
-                        <div
-                          key={tier.quantity}
-                          className="relative"
-                        >
-                          {/* Fire glow behind best seller */}
+                <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+                  {(isPricingReady ? (pricingPlans || []) : []).map((tier, index) => {
+                    const effectivePrice = customKeyPrice != null && customKeyPrice > 0 ? customKeyPrice : tier.pricePerKey;
+                    const total = tier.quantity * effectivePrice;
+                    const basePrice = customKeyPrice != null && customKeyPrice > 0 ? customKeyPrice : (pricingPlans?.[0]?.pricePerKey || effectivePrice);
+                    const discount = basePrice > effectivePrice ? Math.round((1 - effectivePrice / basePrice) * 100) : 0;
+                    const isSelected = selectedTier === index;
+                    const isBestSeller = tier.quantity === 2;
+                    return (
+                      <div key={tier.quantity} className="relative group" onClick={() => setSelectedTier(index)}>
+                        {isBestSeller && (
+                          <div className="absolute -inset-[1.5px] rounded-[1.2rem] z-0 bg-gradient-to-br from-primary via-primary/60 to-primary/30 opacity-80" />
+                        )}
+                        <div className={`relative z-10 rounded-[1.1rem] border transition-all duration-300 cursor-pointer overflow-hidden ${
+                          isBestSeller
+                            ? 'bg-[#0f0f0f] border-transparent'
+                            : isSelected
+                              ? 'border-primary/50 bg-[#0f0f0f]'
+                              : 'border-white/[0.07] bg-[#0a0a0a] hover:border-primary/30 hover:bg-[#0f0f0f]'
+                        }`}>
                           {isBestSeller && (
-                            <div
-                              className="absolute -inset-[2px] rounded-[1.1rem] z-0 animate-pulse"
-                              style={{
-                                background: 'linear-gradient(135deg, #f97316, #eab308, #f97316, #ef4444)',
-                                backgroundSize: '300% 300%',
-                                animation: 'fire-glow 3s ease infinite',
-                              }}
-                            />
+                            <div className="bg-primary text-white text-[10px] font-black uppercase tracking-[0.15em] text-center py-2 flex items-center justify-center gap-1.5">
+                              <Flame className="h-3 w-3" /> Mais Vendida
+                            </div>
                           )}
-                          <div
-                            className={`group relative p-5 rounded-2xl backdrop-blur-sm border transition-all duration-300 cursor-pointer hover:shadow-xl ${
-                              isBestSeller
-                                ? 'bg-card border-transparent hover:shadow-orange-500/20 z-10'
-                                : isSelected
-                                  ? 'ring-2 ring-primary border-primary/50 bg-card/50 hover:shadow-primary/5'
-                                  : 'border-border/50 hover:border-primary/40 bg-card/50 hover:shadow-primary/5'
-                            }`}
-                            onClick={() => setSelectedTier(index)}
-                          >
-                            <div className="absolute inset-0 rounded-2xl bg-gradient-subtle opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                            {isBestSeller && (
-                              <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
-                                <span className="bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500 text-black text-[10px] font-extrabold px-3 py-1 rounded-full shadow-lg shadow-orange-500/30 flex items-center gap-1 whitespace-nowrap">
-                                  <Flame className="h-3 w-3" />
-                                  MAIS VENDIDA
-                                </span>
-                              </div>
-                            )}
-                            {discount > 0 && !isBestSeller && (
-                              <div className="absolute -top-2 right-3 z-10">
-                                <span className="bg-gradient text-primary-foreground text-[10px] font-bold px-2.5 py-1 rounded-full">
-                                  -{discount}%
-                                </span>
-                              </div>
-                            )}
-                            <div className="relative space-y-3 text-center">
-                              <div className="h-12 w-12 rounded-xl flex items-center justify-center mx-auto">
-                                <img src={keyIcon} alt="Chave" className="h-[44px] w-[44px] object-contain" />
+                          {discount > 0 && !isBestSeller && (
+                            <div className="bg-white/[0.06] text-primary text-[10px] font-black uppercase tracking-[0.12em] text-center py-2">
+                              -{discount}% de desconto
+                            </div>
+                          )}
+                          <div className="p-5 space-y-4">
+                            <div className="flex items-center gap-3">
+                              <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ${isBestSeller ? "bg-primary/20" : "bg-white/[0.05]"}`}>
+                                <img src={keyIcon} alt="Chave" className="h-7 w-7 object-contain" />
                               </div>
                               <div>
-                                <h3 className={`text-3xl font-bold ${isBestSeller ? 'bg-gradient-to-r from-orange-400 to-yellow-300 bg-clip-text text-transparent' : 'text-gradient'}`}>{tier.quantity}</h3>
-                                <p className="text-xs text-muted-foreground">{tier.quantity === 1 ? 'chave' : 'chaves'}</p>
+                                <p className={`text-2xl font-black ${isBestSeller ? "text-primary" : "text-white"}`}>{tier.quantity}</p>
+                                <p className="text-[11px] text-white/30 -mt-0.5">{tier.quantity === 1 ? "chave" : "chaves"}</p>
                               </div>
-                              <div className={`rounded-xl p-3 ${isBestSeller ? 'bg-gradient-to-r from-orange-500/15 to-yellow-500/15 border border-orange-500/20' : 'bg-secondary/50'}`}>
-                                <span className={`text-xl font-bold ${isBestSeller ? 'text-orange-400' : 'text-primary'}`}>R$ {total.toFixed(2)}</span>
-                                <p className="text-[11px] text-muted-foreground">total por {tier.quantity === 1 ? 'chave' : `${tier.quantity} chaves`}</p>
-                              </div>
-                              <p className="text-sm font-semibold text-foreground">R$ {effectivePrice.toFixed(2)} por chave/mês</p>
-                              <Button
-                                className={`w-full rounded-xl ${
-                                  isBestSeller
-                                    ? 'bg-gradient-to-r from-orange-500 to-yellow-500 text-black font-bold hover:opacity-90 shadow-lg shadow-orange-500/20'
-                                    : isSelected
-                                      ? 'bg-gradient text-primary-foreground hover:opacity-90'
-                                      : ''
-                                }`}
-                                variant={isBestSeller || isSelected ? 'default' : 'outline'}
-                                size="sm"
-                                disabled={loadingQty !== null}
-                                onClick={(e) => { e.stopPropagation(); handleBuyKeys(tier.quantity); }}
-                              >
-                                {loadingQty === tier.quantity ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : isBestSeller ? <Zap className="mr-2 h-4 w-4" /> : <ShoppingCart className="mr-2 h-4 w-4" />}
-                                {loadingQty === tier.quantity ? 'Gerando...' : isBestSeller ? 'Comprar Agora' : 'Comprar'}
-                              </Button>
                             </div>
+                            <div className={`rounded-xl p-3.5 ${isBestSeller ? "bg-primary/10 border border-primary/20" : "bg-white/[0.04] border border-white/[0.06]"}`}>
+                              <p className={`text-xl font-black ${isBestSeller ? "text-primary" : "text-white"}`}>R$ {total.toFixed(2)}</p>
+                              <p className="text-[11px] text-white/30 mt-0.5">R$ {effectivePrice.toFixed(2)}/chave</p>
+                            </div>
+                            <Button
+                              className={`w-full rounded-xl font-bold text-sm h-10 ${isBestSeller ? "bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/30" : "bg-white/[0.06] hover:bg-primary hover:text-white text-white/70 border border-white/10"}`}
+                              disabled={loadingQty !== null}
+                              onClick={(e) => { e.stopPropagation(); handleBuyKeys(tier.quantity); }}
+                            >
+                              {loadingQty === tier.quantity ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Gerando...</> : isBestSeller ? <><Zap className="mr-2 h-4 w-4" />Comprar Agora</> : <><ShoppingCart className="mr-2 h-4 w-4" />Comprar</>}
+                            </Button>
                           </div>
                         </div>
+                      </div>
                       );
                     })}
-                    {isPricingReady && (
-                      <div className="relative">
-                        <div
-                          className="absolute -inset-[2px] rounded-[1.1rem] z-0 animate-pulse opacity-80"
-                          style={{
-                            background: 'linear-gradient(135deg, #a855f7, #ec4899, #6366f1, #8b5cf6)',
-                            backgroundSize: '300% 300%',
-                            animation: 'fire-glow 4s ease infinite',
-                          }}
-                        />
-                        <div className="relative p-3 rounded-2xl bg-card border border-transparent z-10 h-full flex flex-col overflow-hidden">
-                          <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
-                            <span className="bg-gradient-to-r from-pink-500 to-red-500 text-white text-[10px] font-extrabold px-3 py-1 rounded-full shadow-lg flex items-center gap-1 whitespace-nowrap uppercase tracking-wider animate-pulse">
-                              🔥 Combo Exclusivo
-                            </span>
-                          </div>
-                          <div className="relative flex-1 flex flex-col gap-3">
-                             <div className="relative rounded-xl overflow-hidden bg-black">
-                              <img
-                                src={comboBannerAsset.url}
-                                alt="300 Créditos Lovable + 1 Ano PRO Lite por R$ 89,90"
-                                className="w-full h-auto object-cover aspect-square grayscale opacity-50"
-                                loading="lazy"
-                              />
-                              <div className="absolute inset-0 flex items-center justify-center bg-black/60">
-                                <span className="rotate-[-12deg] border-2 border-red-500 text-red-400 text-lg font-extrabold uppercase tracking-widest px-4 py-1 rounded-md bg-black/70">
-                                  Esgotado
-                                </span>
-                              </div>
-                            </div>
-                            <Button
-                              disabled
-                              className="mt-auto"
-                              variant="secondary"
-                              size="sm"
-                            >
-                              <span className="relative z-10">Esgotado</span>
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    {isPricingReady && (
-                      <div className="relative">
-                        <div
-                          className="absolute -inset-[2px] rounded-[1.1rem] z-0 animate-pulse opacity-80"
-                          style={{
-                            background: 'linear-gradient(135deg, #facc15, #16a34a, #facc15, #1e3a8a)',
-                            backgroundSize: '300% 300%',
-                            animation: 'fire-glow 4s ease infinite',
-                          }}
-                        />
-                        <div className="relative p-3 rounded-2xl bg-card border border-transparent z-10 h-full flex flex-col overflow-hidden">
-                          <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
-                            <span className="bg-gradient-to-r from-yellow-400 to-green-500 text-black text-[10px] font-extrabold px-3 py-1 rounded-full shadow-lg flex items-center gap-1 whitespace-nowrap uppercase tracking-wider animate-pulse">
-                              🏆 Combo Copa do Brasil
-                            </span>
-                          </div>
-                          <div className="relative flex-1 flex flex-col gap-3">
-                             <div className="relative rounded-xl overflow-hidden bg-black">
-                              <img
-                                src={comboChampionBannerAsset.url}
-                                alt="300 Créditos Lovable + 1 Ano PRO Lite + Chave Vitalícia por R$ 149,90"
-                                className="w-full h-auto object-cover aspect-square grayscale opacity-50"
-                                loading="lazy"
-                              />
-                              <div className="absolute inset-0 flex items-center justify-center bg-black/60">
-                                <span className="rotate-[-12deg] border-2 border-red-500 text-red-400 text-lg font-extrabold uppercase tracking-widest px-4 py-1 rounded-md bg-black/70">
-                                  Esgotado
-                                </span>
-                              </div>
-                            </div>
-                            <Button
-                              disabled
-                              className="mt-auto"
-                              variant="secondary"
-                              size="sm"
-                            >
-                              <span className="relative z-10">Esgotado</span>
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    {isPricingReady && (
-                      <div className="relative">
-                        <div
-                          className="absolute -inset-[2px] rounded-[1.1rem] z-0 animate-pulse opacity-80"
-                          style={{
-                            background: 'linear-gradient(135deg, #ec4899, #a855f7, #ec4899, #8b5cf6)',
-                            backgroundSize: '300% 300%',
-                            animation: 'fire-glow 4s ease infinite',
-                          }}
-                        />
-                        <div className="relative p-3 rounded-2xl bg-card border border-transparent z-10 h-full flex flex-col overflow-hidden">
-                          <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
-                            <span className="bg-gradient-to-r from-pink-500 to-purple-500 text-white text-[10px] font-extrabold px-3 py-1 rounded-full shadow-lg flex items-center gap-1 whitespace-nowrap uppercase tracking-wider animate-pulse">
-                              💖 Conta Lovable
-                            </span>
-                          </div>
-                          <div className="relative flex-1 flex flex-col gap-3">
-                            <div className="relative rounded-xl overflow-hidden bg-black">
-                              <img
-                                src={comboAccountBanner}
-                                alt="Conta Lovable + 300 Créditos + 1 Ano PRO por R$ 129,90"
-                                className="w-full h-auto object-cover aspect-square"
-                                loading="lazy"
-                              />
-                            </div>
-                            <Button
-                              disabled={loadingQty !== null}
-                              onClick={() => { setComboAccountAccepted(false); setComboAccountRequirementsOpen(true); }}
-                              className="cta-premium cta-pink mt-auto"
-                              size="sm"
-                            >
-                              <span className="cta-shine" aria-hidden />
-                              {loadingQty === -5 ? <Loader2 className="mr-2 h-4 w-4 animate-spin relative z-10" /> : <Zap className="mr-2 h-4 w-4 relative z-10" />}
-                              <span className="relative z-10">
-                              {loadingQty === -5 ? 'Gerando PIX...' : 'Comprar por R$ 129,90'}
-                              </span>
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    {!isPricingReady && (
-                      <div className="col-span-full rounded-2xl border border-border/50 bg-card/40 p-6 text-sm text-muted-foreground font-display">
-                        Carregando valores atualizados...
-                      </div>
-                    )}
-                    {isPricingReady && (
-                      <div className="relative">
-                        <div
-                          className="absolute -inset-[2px] rounded-[1.1rem] z-0 animate-pulse opacity-80"
-                          style={{
-                            background: 'linear-gradient(135deg, #06b6d4, #14b8a6, #22d3ee, #0ea5e9)',
-                            backgroundSize: '300% 300%',
-                            animation: 'fire-glow 4s ease infinite',
-                          }}
-                        />
-                        <div className="relative p-3 rounded-2xl bg-card border border-transparent z-10 h-full flex flex-col overflow-hidden">
-                          <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
-                            <span className="bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-[10px] font-extrabold px-3 py-1 rounded-full shadow-lg flex items-center gap-1 whitespace-nowrap uppercase tracking-wider animate-pulse">
-                              ⚡ Manus AI
-                            </span>
-                          </div>
-                          <div className="relative flex-1 flex flex-col gap-3">
-                            <div className="relative rounded-xl overflow-hidden bg-black">
-                              <img
-                                src={manusCreditsBannerAsset.url}
-                                alt="1000 Créditos Manus AI por R$ 39,90"
-                                className="w-full h-auto object-cover aspect-square"
-                                loading="lazy"
-                              />
-                            </div>
-                            <Button
-                              disabled={loadingQty !== null}
-                              onClick={() => { setManusCreditsAccepted(false); setManusCreditsRequirementsOpen(true); }}
-                              className="cta-premium mt-auto text-white"
-                              style={{
-                                background: 'linear-gradient(110deg, #0891b2 0%, #14b8a6 50%, #06b6d4 100%)',
-                                boxShadow: '0 8px 24px -8px rgba(20, 184, 166, 0.6)',
-                              }}
-                              size="sm"
-                            >
-                              <span className="cta-shine" aria-hidden />
-                              {loadingQty === -6 ? <Loader2 className="mr-2 h-4 w-4 animate-spin relative z-10" /> : <Zap className="mr-2 h-4 w-4 relative z-10" />}
-                              <span className="relative z-10">
-                              {loadingQty === -6 ? 'Gerando PIX...' : 'Comprar por R$ 39,90'}
-                              </span>
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    {isPricingReady && (
-                      <div className="relative">
-                        <div
-                          className="absolute -inset-[2px] rounded-[1.1rem] z-0 animate-pulse opacity-80"
-                          style={{
-                            background: 'linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899, #3b82f6)',
-                            backgroundSize: '300% 300%',
-                            animation: 'fire-glow 4s ease infinite',
-                          }}
-                        />
-                        <div className="relative p-3 rounded-2xl bg-card border border-transparent z-10 h-full flex flex-col overflow-hidden">
-                          <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
-                            <span className="bg-gradient-to-r from-indigo-500 to-pink-500 text-white text-[10px] font-extrabold px-3 py-1 rounded-full shadow-lg flex items-center gap-1 whitespace-nowrap uppercase tracking-wider animate-pulse">
-                              ✨ Gemini Pro 18 Meses
-                            </span>
-                          </div>
-                          <div className="relative flex-1 flex flex-col gap-3">
-                            <div className="relative rounded-xl overflow-hidden bg-black">
-                              <img
-                                src={geminiProBanner}
-                                alt="Gemini Pro - 18 Meses de Assinatura por R$ 97,00"
-                                className="w-full h-auto object-cover aspect-square"
-                                loading="lazy"
-                              />
-                            </div>
-                            <Button
-                              disabled={loadingQty !== null}
-                              onClick={() => { setGeminiProAccepted(false); setGeminiProRequirementsOpen(true); }}
-                              className="cta-premium mt-auto text-white"
-                              style={{
-                                background: 'linear-gradient(110deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%)',
-                                boxShadow: '0 8px 24px -8px rgba(139, 92, 246, 0.6)',
-                              }}
-                              size="sm"
-                            >
-                              <span className="cta-shine" aria-hidden />
-                              {loadingQty === -8 ? <Loader2 className="mr-2 h-4 w-4 animate-spin relative z-10" /> : <Zap className="mr-2 h-4 w-4 relative z-10" />}
-                              <span className="relative z-10">
-                              {loadingQty === -8 ? 'Gerando PIX...' : 'Comprar por R$ 97,00'}
-                              </span>
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    {isPricingReady && (
-                      <div className="relative">
-                        <div
-                          className="absolute -inset-[2px] rounded-[1.1rem] z-0 animate-pulse opacity-80"
-                          style={{
-                            background: 'linear-gradient(135deg, #a855f7, #7c3aed, #6366f1, #ec4899)',
-                            backgroundSize: '300% 300%',
-                            animation: 'fire-glow 4s ease infinite',
-                          }}
-                        />
-                        <div className="relative p-3 rounded-2xl bg-card border border-transparent z-10 h-full flex flex-col overflow-hidden">
-                          <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
-                            <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-extrabold px-3 py-1 rounded-full shadow-lg flex items-center gap-1 whitespace-nowrap uppercase tracking-wider animate-pulse">
-                              🚀 Seedance 8.500K
-                            </span>
-                          </div>
-                          <div className="relative flex-1 flex flex-col gap-3">
-                            <div className="relative rounded-xl overflow-hidden bg-black">
-                              <img
-                                src={seedanceBannerAsset.url}
-                                alt="Conta Seedance com 8.500K créditos por R$ 19,90"
-                                className="w-full h-auto object-cover aspect-square"
-                                loading="lazy"
-                              />
-                            </div>
-                            <Button
-                              disabled={loadingQty !== null}
-                              onClick={() => { setSeedanceAccepted(false); setSeedanceRequirementsOpen(true); }}
-                              className="cta-premium mt-auto text-white"
-                              style={{
-                                background: 'linear-gradient(110deg, #7c3aed 0%, #a855f7 50%, #ec4899 100%)',
-                                boxShadow: '0 8px 24px -8px rgba(168, 85, 247, 0.6)',
-                              }}
-                              size="sm"
-                            >
-                              <span className="cta-shine" aria-hidden />
-                              {loadingQty === -9 ? <Loader2 className="mr-2 h-4 w-4 animate-spin relative z-10" /> : <Zap className="mr-2 h-4 w-4 relative z-10" />}
-                              <span className="relative z-10">
-                              {loadingQty === -9 ? 'Gerando PIX...' : 'Comprar por R$ 19,90'}
-                              </span>
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    {isPricingReady && (
-                      <div className="relative">
-                        <div
-                          className="absolute -inset-[2px] rounded-[1.1rem] z-0 animate-pulse opacity-80"
-                          style={{
-                            background: 'linear-gradient(135deg, #a855f7, #8b5cf6, #6366f1, #d946ef)',
-                            backgroundSize: '300% 300%',
-                            animation: 'fire-glow 4s ease infinite',
-                          }}
-                        />
-                        <div className="relative p-3 rounded-2xl bg-card border border-transparent z-10 h-full flex flex-col overflow-hidden">
-                          <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
-                            <span className="bg-gradient-to-r from-purple-500 to-fuchsia-500 text-white text-[10px] font-extrabold px-3 py-1 rounded-full shadow-lg flex items-center gap-1 whitespace-nowrap uppercase tracking-wider animate-pulse">
-                              🎬 CapCut Pro 30d
-                            </span>
-                          </div>
-                          <div className="relative flex-1 flex flex-col gap-3">
-                            <div className="relative rounded-xl overflow-hidden bg-black">
-                              <img
-                                src={capcutProBannerAsset.url}
-                                alt="CapCut Pro 30 dias por R$ 24,99"
-                                className="w-full h-auto object-cover aspect-square"
-                                loading="lazy"
-                              />
-                            </div>
-                            <Button
-                              disabled={loadingQty !== null}
-                              onClick={() => { setCapcutProAccepted(false); setCapcutProRequirementsOpen(true); }}
-                              className="cta-premium mt-auto text-white"
-                              style={{
-                                background: 'linear-gradient(110deg, #7c3aed 0%, #a855f7 50%, #d946ef 100%)',
-                                boxShadow: '0 8px 24px -8px rgba(168, 85, 247, 0.6)',
-                              }}
-                              size="sm"
-                            >
-                              <span className="cta-shine" aria-hidden />
-                              {loadingQty === -10 ? <Loader2 className="mr-2 h-4 w-4 animate-spin relative z-10" /> : <Zap className="mr-2 h-4 w-4 relative z-10" />}
-                              <span className="relative z-10">
-                              {loadingQty === -10 ? 'Gerando PIX...' : 'Comprar por R$ 24,99'}
-                              </span>
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    {isPricingReady && (
-                      <div className="relative">
-                        <div
-                          className="absolute -inset-[2px] rounded-[1.1rem] z-0 animate-pulse opacity-80"
-                          style={{
-                            background: 'linear-gradient(135deg, #a855f7, #7c3aed, #4c1d95, #c026d3)',
-                            backgroundSize: '300% 300%',
-                            animation: 'fire-glow 4s ease infinite',
-                          }}
-                        />
-                        <div className="relative p-3 rounded-2xl bg-card border border-transparent z-10 h-full flex flex-col overflow-hidden">
-                          <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
-                            <span className="bg-gradient-to-r from-violet-500 to-purple-600 text-white text-[10px] font-extrabold px-3 py-1 rounded-full shadow-lg flex items-center gap-1 whitespace-nowrap uppercase tracking-wider animate-pulse">
-                              🔒 Conta Lovable Pro
-                            </span>
-                          </div>
-                          <div className="relative flex-1 flex flex-col gap-3">
-                            <div className="relative rounded-xl overflow-hidden bg-black">
-                              <img
-                                src={lovableAccountBannerAsset.url}
-                                alt="Conta Lovable AI Pro privada com 105 créditos e 30 dias Pro por R$ 27,90"
-                                className="w-full h-auto object-cover aspect-square"
-                                loading="lazy"
-                              />
-                            </div>
-                            <Button
-                              disabled={loadingQty !== null}
-                              onClick={() => { setLovableAccountAccepted(false); setLovableAccountRequirementsOpen(true); }}
-                              className="cta-premium mt-auto text-white"
-                              style={{
-                                background: 'linear-gradient(110deg, #4c1d95 0%, #7c3aed 50%, #a855f7 100%)',
-                                boxShadow: '0 8px 24px -8px rgba(124, 58, 237, 0.6)',
-                              }}
-                              size="sm"
-                            >
-                              <span className="cta-shine" aria-hidden />
-                              {loadingQty === -11 ? <Loader2 className="mr-2 h-4 w-4 animate-spin relative z-10" /> : <Zap className="mr-2 h-4 w-4 relative z-10" />}
-                              <span className="relative z-10">
-                              {loadingQty === -11 ? 'Gerando PIX...' : 'Comprar por R$ 27,90'}
-                              </span>
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </div>
 
@@ -1032,23 +648,23 @@ export default function ResellerDashboard() {
                   <div className="relative p-6 sm:p-7 rounded-3xl bg-card border border-transparent z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
                     <div className="flex items-start gap-4">
                       <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-amber-500/20 to-rose-500/20 flex items-center justify-center shrink-0">
-                        <img src={keyIcon} alt="Chave Vitalícia" className="h-[44px] w-[44px] object-contain" />
+                        <img src={keyIcon} alt="Chave VitalÃ­cia" className="h-[44px] w-[44px] object-contain" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2 mb-1">
                           {isLifetimePromoActive ? (
                             <span className="bg-gradient-to-r from-amber-500 to-rose-500 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider animate-pulse">
-                              ⚡ PROMOÇÃO RELÂMPAGO
+                              âš¡ PROMOÃ‡ÃƒO RELÃ‚MPAGO
                             </span>
                           ) : (
                             <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">
                               Exclusivo
                             </span>
                           )}
-                          <span className="text-[10px] font-bold text-purple-300 uppercase tracking-wider">Validade ∞</span>
+                          <span className="text-[10px] font-bold text-purple-300 uppercase tracking-wider">Validade âˆž</span>
                         </div>
                         <h3 className="text-xl sm:text-2xl font-black text-foreground font-display">
-                          Chave <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Vitalícia</span>
+                          Chave <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">VitalÃ­cia</span>
                         </h3>
                         <p className="text-sm text-muted-foreground mt-1 max-w-md">
                           1 chave com validade ilimitada para o cliente final. Venda como produto premium.
@@ -1056,7 +672,7 @@ export default function ResellerDashboard() {
                         {isLifetimePromoActive && !['wallacesouzasantos@gmail.com','ecombrunobp@gmail.com','techmind.pro4.0@gmail.com'].includes(user?.email?.toLowerCase() ?? '') && (
                           <p className="text-xs font-bold text-pink-300 mt-2 flex items-center gap-1.5">
                             <Clock className="h-3.5 w-3.5" />
-                            Até amanhã às 20h • Termina em <span className="font-mono text-pink-200">{lifetimePromoTimeLeft}</span>
+                            AtÃ© amanhÃ£ Ã s 20h â€¢ Termina em <span className="font-mono text-pink-200">{lifetimePromoTimeLeft}</span>
                           </p>
                         )}
                       </div>
@@ -1074,7 +690,7 @@ export default function ResellerDashboard() {
                         ) : (
                           <>
                             <span className="text-3xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">{['wallacesouzasantos@gmail.com','ecombrunobp@gmail.com','techmind.pro4.0@gmail.com'].includes(user?.email?.toLowerCase() ?? '') ? 'R$ 29,90' : 'R$ 147,90'}</span>
-                            <p className="text-[11px] text-muted-foreground">pagamento único</p>
+                            <p className="text-[11px] text-muted-foreground">pagamento Ãºnico</p>
                           </>
                         )}
                       </div>
@@ -1085,7 +701,7 @@ export default function ResellerDashboard() {
                       >
                         <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:animate-[shimmer_1.2s_ease-in-out]" />
                         {loadingQty === -2 ? <Loader2 className="relative mr-2 h-4 w-4 animate-spin" /> : <Zap className="relative mr-2 h-4 w-4 animate-pulse" />}
-                        <span className="relative">{loadingQty === -2 ? 'Gerando PIX...' : 'Comprar Vitalícia'}</span>
+                        <span className="relative">{loadingQty === -2 ? 'Gerando PIX...' : 'Comprar VitalÃ­cia'}</span>
                       </Button>
                     </div>
                   </div>
@@ -1105,27 +721,27 @@ export default function ResellerDashboard() {
                   <div className="relative p-6 sm:p-7 rounded-3xl bg-card border border-transparent z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
                     <div className="flex items-start gap-4">
                       <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-amber-500/20 flex items-center justify-center shrink-0">
-                        <img src={keyIcon} alt="10 Chaves Vitalícias" className="h-[44px] w-[44px] object-contain" />
+                        <img src={keyIcon} alt="10 Chaves VitalÃ­cias" className="h-[44px] w-[44px] object-contain" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2 mb-1 flex-wrap">
                           <span className="bg-gradient-to-r from-purple-500 to-amber-500 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider animate-pulse">
-                            ⚡ PROMOÇÃO RELÂMPAGO
+                            âš¡ PROMOÃ‡ÃƒO RELÃ‚MPAGO
                           </span>
                           <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                            MAIS ECONÔMICA
+                            MAIS ECONÃ”MICA
                           </span>
-                          <span className="text-[10px] font-bold text-purple-300 uppercase tracking-wider">Validade ∞</span>
+                          <span className="text-[10px] font-bold text-purple-300 uppercase tracking-wider">Validade âˆž</span>
                         </div>
                         <h3 className="text-xl sm:text-2xl font-black text-foreground font-display">
-                          10 Chaves <span className="bg-gradient-to-r from-purple-400 to-amber-400 bg-clip-text text-transparent">Vitalícias</span>
+                          10 Chaves <span className="bg-gradient-to-r from-purple-400 to-amber-400 bg-clip-text text-transparent">VitalÃ­cias</span>
                         </h3>
                         <p className="text-sm text-muted-foreground mt-1 max-w-md">
                           Pacote com 10 chaves de validade ilimitada por apenas R$ 22,99 cada. Estoque premium para vender em escala.
                         </p>
                         <p className="text-xs font-bold text-amber-300 mt-2 flex items-center gap-1.5">
                           <Clock className="h-3.5 w-3.5" />
-                          Até amanhã às 20h • Termina em <span className="font-mono text-amber-200">{lifetimePromoTimeLeft}</span>
+                          AtÃ© amanhÃ£ Ã s 20h â€¢ Termina em <span className="font-mono text-amber-200">{lifetimePromoTimeLeft}</span>
                         </p>
                       </div>
                     </div>
@@ -1144,7 +760,7 @@ export default function ResellerDashboard() {
                       >
                         <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:animate-[shimmer_1.2s_ease-in-out]" />
                         {loadingQty === -7 ? <Loader2 className="relative mr-2 h-4 w-4 animate-spin" /> : <Zap className="relative mr-2 h-4 w-4 animate-pulse" />}
-                        <span className="relative">{loadingQty === -7 ? 'Gerando PIX...' : 'Comprar 10 Vitalícias'}</span>
+                        <span className="relative">{loadingQty === -7 ? 'Gerando PIX...' : 'Comprar 10 VitalÃ­cias'}</span>
                       </Button>
                     </div>
                   </div>
@@ -1172,7 +788,7 @@ export default function ResellerDashboard() {
                       {customQty && parseInt(customQty) > 0 && (
                         <div className="text-sm space-y-0.5">
                           <p className="text-muted-foreground">
-                            Preço: <span className="font-semibold text-foreground">{isPricingReady ? `R$ ${getEffectivePrice(parseInt(customQty)).toFixed(2)}/chave` : 'Carregando...'}</span>
+                            PreÃ§o: <span className="font-semibold text-foreground">{isPricingReady ? `R$ ${getEffectivePrice(parseInt(customQty)).toFixed(2)}/chave` : 'Carregando...'}</span>
                           </p>
                           <p className="text-muted-foreground">
                             Total: <span className="font-bold text-gradient">{isPricingReady ? `R$ ${(parseInt(customQty) * getEffectivePrice(parseInt(customQty))).toFixed(2)}` : 'Carregando...'}</span>
@@ -1217,7 +833,7 @@ export default function ResellerDashboard() {
                         <span className="text-[13px] truncate font-semibold font-display">{customer.email}</span>
                       </div>
                       <div className="flex gap-4 text-xs text-muted-foreground pl-12 font-display">
-                        <span className="font-bold text-foreground">{customer.licenses}</span> licença(s)
+                        <span className="font-bold text-foreground">{customer.licenses}</span> licenÃ§a(s)
                         <span className="text-success font-bold">{customer.active}</span> ativa(s)
                         <span className="flex items-center gap-1"><Monitor className="h-3 w-3" />{customer.devices}</span>
                       </div>
@@ -1237,7 +853,7 @@ export default function ResellerDashboard() {
                 <div className="flex items-center gap-1.5 mt-2 text-xs font-display">
                   <Coins className="h-3.5 w-3.5 text-muted-foreground" />
                   <span className={availableCredits <= 0 ? 'text-destructive font-bold' : 'text-success font-bold'}>
-                    {availableCredits} disponíveis
+                    {availableCredits} disponÃ­veis
                   </span>
                   <span className="text-muted-foreground">/ {credits?.credits_total || 0} total</span>
                 </div>
@@ -1292,7 +908,7 @@ export default function ResellerDashboard() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <span className="text-sm">{license.customer_name || <span className="text-muted-foreground italic">—</span>}</span>
+                          <span className="text-sm">{license.customer_name || <span className="text-muted-foreground italic">â€”</span>}</span>
                         </TableCell>
                         <TableCell>{license.email}</TableCell>
                         <TableCell><StatusBadge status={license.status} /></TableCell>
@@ -1303,7 +919,7 @@ export default function ResellerDashboard() {
                               <span className="truncate max-w-[100px]">{license.devices[0].device_name || 'Vinculado'}</span>
                             </div>
                           ) : (
-                            <span className="text-muted-foreground text-sm">Não vinculado</span>
+                            <span className="text-muted-foreground text-sm">NÃ£o vinculado</span>
                           )}
                         </TableCell>
                         <TableCell>
@@ -1324,11 +940,11 @@ export default function ResellerDashboard() {
                               <DropdownMenuSeparator />
                               {license.status === 'expired' && (
                                 <DropdownMenuItem onClick={() => renewLicense.mutate({ licenseId: license.id, durationDays: 30 })}>
-                                  <RefreshCw className="mr-2 h-4 w-4" />Renovar +30 dias (1 crédito)
+                                  <RefreshCw className="mr-2 h-4 w-4" />Renovar +30 dias (1 crÃ©dito)
                                 </DropdownMenuItem>
                               )}
                               <DropdownMenuItem onClick={() => setExpiryEdit({ id: license.id, currentExpiry: license.expires_at })}>
-                                <CalendarDays className="mr-2 h-4 w-4" />Alterar expiração
+                                <CalendarDays className="mr-2 h-4 w-4" />Alterar expiraÃ§Ã£o
                               </DropdownMenuItem>
                               <DropdownMenuItem onClick={() => resetDevice.mutate(license.id)}>
                                 <Monitor className="mr-2 h-4 w-4" />Resetar dispositivo
@@ -1369,7 +985,7 @@ export default function ResellerDashboard() {
                     <div className="grid grid-cols-2 gap-3 text-xs min-w-0">
                       <div className="min-w-0">
                         <p className="text-muted-foreground mb-1">Cliente</p>
-                        <p className="truncate text-foreground">{license.customer_name || '—'}</p>
+                        <p className="truncate text-foreground">{license.customer_name || 'â€”'}</p>
                       </div>
                       <div className="min-w-0">
                         <p className="text-muted-foreground mb-1">Status</p>
@@ -1387,7 +1003,7 @@ export default function ResellerDashboard() {
                             <span className="truncate">{license.devices[0].device_name || 'Vinculado'}</span>
                           </div>
                         ) : (
-                          <span className="text-muted-foreground">Não vinculado</span>
+                          <span className="text-muted-foreground">NÃ£o vinculado</span>
                         )}
                       </div>
                       <div>
@@ -1409,7 +1025,7 @@ export default function ResellerDashboard() {
                         </Button>
                       )}
                       <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={() => setExpiryEdit({ id: license.id, currentExpiry: license.expires_at })}>
-                        <CalendarDays className="mr-1.5 h-3.5 w-3.5" />Expiração
+                        <CalendarDays className="mr-1.5 h-3.5 w-3.5" />ExpiraÃ§Ã£o
                       </Button>
                       <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={() => resetDevice.mutate(license.id)}>
                         <Monitor className="mr-1.5 h-3.5 w-3.5" />Resetar
@@ -1431,29 +1047,29 @@ export default function ResellerDashboard() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Criar Nova Chave</DialogTitle>
-              <DialogDescription>Gere uma nova chave de licença</DialogDescription>
+              <DialogDescription>Gere uma nova chave de licenÃ§a</DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
                 <Label htmlFor="customerName2">Nome do cliente</Label>
-                <Input id="customerName2" placeholder="Ex: João Silva" value={newCustomerName} onChange={(e) => setNewCustomerName(e.target.value)} />
+                <Input id="customerName2" placeholder="Ex: JoÃ£o Silva" value={newCustomerName} onChange={(e) => setNewCustomerName(e.target.value)} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email do cliente</Label>
                 <Input id="email" type="email" placeholder="cliente@exemplo.com" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} />
               </div>
               <div className="space-y-2">
-                <Label>Duração</Label>
+                <Label>DuraÃ§Ã£o</Label>
                 <div className="rounded-xl border border-border/20 bg-background/20 px-4 py-3 text-sm">
-                  30 dias <span className="text-xs text-muted-foreground">(fixo — teste continua separado e licença comum não usa mais 1 ano)</span>
+                  30 dias <span className="text-xs text-muted-foreground">(fixo â€” teste continua separado e licenÃ§a comum nÃ£o usa mais 1 ano)</span>
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="price">Preço (R$)</Label>
+                <Label htmlFor="price">PreÃ§o (R$)</Label>
                 <Input id="price" type="number" step="0.01" placeholder="0.00" value={newPrice} onChange={(e) => setNewPrice(e.target.value)} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="notes">Observações</Label>
+                <Label htmlFor="notes">ObservaÃ§Ãµes</Label>
                 <Textarea id="notes" placeholder="Notas..." value={newNotes} onChange={(e) => setNewNotes(e.target.value)} />
               </div>
             </div>
@@ -1473,12 +1089,12 @@ export default function ResellerDashboard() {
             {selectedLicense && (
               <div className="space-y-4">
                 <div><Label className="text-muted-foreground">Chave</Label><p className="font-mono text-sm">{selectedLicense.license_key}</p></div>
-                <div><Label className="text-muted-foreground">Cliente</Label><p>{selectedLicense.customer_name || '—'}</p></div>
+                <div><Label className="text-muted-foreground">Cliente</Label><p>{selectedLicense.customer_name || 'â€”'}</p></div>
                 <div><Label className="text-muted-foreground">Email</Label><p>{selectedLicense.email}</p></div>
                 <div><Label className="text-muted-foreground">Status</Label><p><StatusBadge status={selectedLicense.status} /></p></div>
-                <div><Label className="text-muted-foreground">Criada em</Label><p className="text-sm">{format(parseISO(selectedLicense.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}</p></div>
-                <div><Label className="text-muted-foreground">Expira em</Label><p className="text-sm">{format(parseISO(selectedLicense.expires_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}</p></div>
-                {selectedLicense.notes && <div><Label className="text-muted-foreground">Observações</Label><p className="text-sm">{selectedLicense.notes}</p></div>}
+                <div><Label className="text-muted-foreground">Criada em</Label><p className="text-sm">{format(parseISO(selectedLicense.created_at), "dd/MM/yyyy 'Ã s' HH:mm", { locale: ptBR })}</p></div>
+                <div><Label className="text-muted-foreground">Expira em</Label><p className="text-sm">{format(parseISO(selectedLicense.expires_at), "dd/MM/yyyy 'Ã s' HH:mm", { locale: ptBR })}</p></div>
+                {selectedLicense.notes && <div><Label className="text-muted-foreground">ObservaÃ§Ãµes</Label><p className="text-sm">{selectedLicense.notes}</p></div>}
               </div>
             )}
           </DialogContent>
@@ -1489,7 +1105,7 @@ export default function ResellerDashboard() {
           <DialogContent className="max-w-sm">
             <DialogHeader>
               <DialogTitle>Editar Nome do Cliente</DialogTitle>
-              <DialogDescription>Defina um nome para identificar o cliente desta licença</DialogDescription>
+              <DialogDescription>Defina um nome para identificar o cliente desta licenÃ§a</DialogDescription>
             </DialogHeader>
             <div className="py-4">
               <Input placeholder="Nome do cliente..." value={editNameValue} onChange={(e) => setEditNameValue(e.target.value)} />
@@ -1507,8 +1123,8 @@ export default function ResellerDashboard() {
         <Dialog open={!!expiryEdit} onOpenChange={(open) => { if (!open) { setExpiryEdit(null); setNewExpiryDays(''); } }}>
           <DialogContent className="max-w-sm">
             <DialogHeader>
-              <DialogTitle>Alterar Expiração</DialogTitle>
-              <DialogDescription>Defina uma nova data de expiração</DialogDescription>
+              <DialogTitle>Alterar ExpiraÃ§Ã£o</DialogTitle>
+              <DialogDescription>Defina uma nova data de expiraÃ§Ã£o</DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-2">
               <div className="grid grid-cols-4 gap-2">
@@ -1533,7 +1149,7 @@ export default function ResellerDashboard() {
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Revogar chave?</AlertDialogTitle>
-              <AlertDialogDescription>Esta ação não pode ser desfeita.</AlertDialogDescription>
+              <AlertDialogDescription>Esta aÃ§Ã£o nÃ£o pode ser desfeita.</AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancelar</AlertDialogCancel>
@@ -1548,10 +1164,10 @@ export default function ResellerDashboard() {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 text-xl">
                 <Flame className="h-6 w-6 text-orange-500" />
-                🎉 Promoção de Inauguração
+                ðŸŽ‰ PromoÃ§Ã£o de InauguraÃ§Ã£o
               </DialogTitle>
               <p className="text-sm text-muted-foreground">
-                Pacote especial: <span className="font-bold text-orange-500">10 chaves por R$ 249,90</span> — só nas próximas 24h!
+                Pacote especial: <span className="font-bold text-orange-500">10 chaves por R$ 249,90</span> â€” sÃ³ nas prÃ³ximas 24h!
               </p>
             </DialogHeader>
             <div className="space-y-5 py-4">
@@ -1565,7 +1181,7 @@ export default function ResellerDashboard() {
               </div>
               <div className="rounded-2xl bg-card border border-border/50 p-4 space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Preço por chave</span>
+                  <span className="text-muted-foreground">PreÃ§o por chave</span>
                   <span className="font-semibold text-orange-500">R$ 24,99</span>
                 </div>
                 <div className="flex justify-between text-sm">
@@ -1615,12 +1231,12 @@ export default function ResellerDashboard() {
               </AlertDialogTitle>
               <AlertDialogDescription asChild>
                 <div className="space-y-3 text-sm text-muted-foreground">
-                  <p className="font-semibold text-foreground">Antes de comprar, confirme que você atende aos requisitos:</p>
+                  <p className="font-semibold text-foreground">Antes de comprar, confirme que vocÃª atende aos requisitos:</p>
                   <ul className="space-y-2 list-none pl-0">
-                    <li className="flex gap-2"><span className="text-purple-400">●</span> A conta Lovable que receberá os créditos deve ser do plano <span className="font-bold text-foreground">FREE</span> (sem assinatura ativa).</li>
-                    <li className="flex gap-2"><span className="text-purple-400">●</span> Os 300 créditos + 1 Ano PRO Lite serão aplicados nessa conta FREE.</li>
-                    <li className="flex gap-2"><span className="text-purple-400">●</span> Após o pagamento, você receberá o link do grupo e deverá enviar o comprovante ao ADM para liberação.</li>
-                    <li className="flex gap-2"><span className="text-purple-400">●</span> Compra não reembolsável após ativação.</li>
+                    <li className="flex gap-2"><span className="text-purple-400">â—</span> A conta Lovable que receberÃ¡ os crÃ©ditos deve ser do plano <span className="font-bold text-foreground">FREE</span> (sem assinatura ativa).</li>
+                    <li className="flex gap-2"><span className="text-purple-400">â—</span> Os 300 crÃ©ditos + 1 Ano PRO Lite serÃ£o aplicados nessa conta FREE.</li>
+                    <li className="flex gap-2"><span className="text-purple-400">â—</span> ApÃ³s o pagamento, vocÃª receberÃ¡ o link do grupo e deverÃ¡ enviar o comprovante ao ADM para liberaÃ§Ã£o.</li>
+                    <li className="flex gap-2"><span className="text-purple-400">â—</span> Compra nÃ£o reembolsÃ¡vel apÃ³s ativaÃ§Ã£o.</li>
                   </ul>
                   <label className="flex items-start gap-2 pt-2 cursor-pointer">
                     <input
@@ -1629,7 +1245,7 @@ export default function ResellerDashboard() {
                       onChange={(e) => setComboAccepted(e.target.checked)}
                       className="mt-1 h-4 w-4 accent-purple-500"
                     />
-                    <span className="text-foreground">Li, entendi e confirmo que minha conta é <span className="font-bold">FREE</span>.</span>
+                    <span className="text-foreground">Li, entendi e confirmo que minha conta Ã© <span className="font-bold">FREE</span>.</span>
                   </label>
                 </div>
               </AlertDialogDescription>
@@ -1661,21 +1277,21 @@ export default function ResellerDashboard() {
               </AlertDialogTitle>
               <AlertDialogDescription asChild>
                 <div className="space-y-3 text-sm text-muted-foreground">
-                  <p className="font-semibold text-foreground">Você está adquirindo:</p>
+                  <p className="font-semibold text-foreground">VocÃª estÃ¡ adquirindo:</p>
                   <div className="rounded-lg border border-yellow-500/40 bg-yellow-500/10 p-3 text-yellow-200">
                     <p className="text-xs font-bold uppercase tracking-wider flex items-center gap-1">
-                      <AlertTriangle className="h-4 w-4" /> Atenção
+                      <AlertTriangle className="h-4 w-4" /> AtenÃ§Ã£o
                     </p>
                     <p className="text-sm mt-1">
-                      Funciona <span className="font-bold">apenas em contas Manus AI criadas há no máximo 3 meses</span>. Contas mais antigas não recebem os créditos.
+                      Funciona <span className="font-bold">apenas em contas Manus AI criadas hÃ¡ no mÃ¡ximo 3 meses</span>. Contas mais antigas nÃ£o recebem os crÃ©ditos.
                     </p>
                   </div>
                   <ul className="space-y-2 list-none pl-0">
-                    <li className="flex gap-2"><span className="text-yellow-400">●</span> <span><span className="font-bold text-foreground">300 Créditos Lovable</span> aplicados em uma conta <span className="font-bold">FREE</span>.</span></li>
-                    <li className="flex gap-2"><span className="text-yellow-400">●</span> <span><span className="font-bold text-foreground">1 Ano de PRO Lite</span> na mesma conta FREE.</span></li>
-                    <li className="flex gap-2"><span className="text-yellow-400">●</span> <span><span className="font-bold text-foreground">1 Chave Vitalícia</span> (validade ilimitada) para revenda.</span></li>
-                    <li className="flex gap-2"><span className="text-yellow-400">●</span> Após o pagamento, envie o comprovante ao ADM no WhatsApp para liberação do combo e entrada no grupo.</li>
-                    <li className="flex gap-2"><span className="text-yellow-400">●</span> Compra não reembolsável após ativação.</li>
+                    <li className="flex gap-2"><span className="text-yellow-400">â—</span> <span><span className="font-bold text-foreground">300 CrÃ©ditos Lovable</span> aplicados em uma conta <span className="font-bold">FREE</span>.</span></li>
+                    <li className="flex gap-2"><span className="text-yellow-400">â—</span> <span><span className="font-bold text-foreground">1 Ano de PRO Lite</span> na mesma conta FREE.</span></li>
+                    <li className="flex gap-2"><span className="text-yellow-400">â—</span> <span><span className="font-bold text-foreground">1 Chave VitalÃ­cia</span> (validade ilimitada) para revenda.</span></li>
+                    <li className="flex gap-2"><span className="text-yellow-400">â—</span> ApÃ³s o pagamento, envie o comprovante ao ADM no WhatsApp para liberaÃ§Ã£o do combo e entrada no grupo.</li>
+                    <li className="flex gap-2"><span className="text-yellow-400">â—</span> Compra nÃ£o reembolsÃ¡vel apÃ³s ativaÃ§Ã£o.</li>
                   </ul>
                   <label className="flex items-start gap-2 pt-2 cursor-pointer">
                     <input
@@ -1684,7 +1300,7 @@ export default function ResellerDashboard() {
                       onChange={(e) => setComboChampionAccepted(e.target.checked)}
                       className="mt-1 h-4 w-4 accent-yellow-500"
                     />
-                    <span className="text-foreground">Li, entendi e confirmo que a conta Lovable de destino é <span className="font-bold">FREE</span>.</span>
+                    <span className="text-foreground">Li, entendi e confirmo que a conta Lovable de destino Ã© <span className="font-bold">FREE</span>.</span>
                   </label>
                 </div>
               </AlertDialogDescription>
@@ -1716,13 +1332,13 @@ export default function ResellerDashboard() {
               </AlertDialogTitle>
               <AlertDialogDescription asChild>
                 <div className="space-y-3 text-sm text-muted-foreground">
-                  <p className="font-semibold text-foreground">Você está adquirindo:</p>
+                  <p className="font-semibold text-foreground">VocÃª estÃ¡ adquirindo:</p>
                   <ul className="space-y-2 list-none pl-0">
-                    <li className="flex gap-2"><span className="text-pink-400">●</span> <span><span className="font-bold text-foreground">Conta Lovable</span> nova com login e senha enviados por e-mail.</span></li>
-                    <li className="flex gap-2"><span className="text-pink-400">●</span> <span><span className="font-bold text-foreground">300 Créditos Lovable</span> aplicados instantaneamente.</span></li>
-                    <li className="flex gap-2"><span className="text-pink-400">●</span> <span><span className="font-bold text-foreground">1 Ano de PRO</span> com recursos ilimitados.</span></li>
-                    <li className="flex gap-2"><span className="text-pink-400">●</span> Após o pagamento, envie o comprovante ao ADM no grupo para liberação da conta.</li>
-                    <li className="flex gap-2"><span className="text-pink-400">●</span> Compra não reembolsável após a entrega das credenciais.</li>
+                    <li className="flex gap-2"><span className="text-pink-400">â—</span> <span><span className="font-bold text-foreground">Conta Lovable</span> nova com login e senha enviados por e-mail.</span></li>
+                    <li className="flex gap-2"><span className="text-pink-400">â—</span> <span><span className="font-bold text-foreground">300 CrÃ©ditos Lovable</span> aplicados instantaneamente.</span></li>
+                    <li className="flex gap-2"><span className="text-pink-400">â—</span> <span><span className="font-bold text-foreground">1 Ano de PRO</span> com recursos ilimitados.</span></li>
+                    <li className="flex gap-2"><span className="text-pink-400">â—</span> ApÃ³s o pagamento, envie o comprovante ao ADM no grupo para liberaÃ§Ã£o da conta.</li>
+                    <li className="flex gap-2"><span className="text-pink-400">â—</span> Compra nÃ£o reembolsÃ¡vel apÃ³s a entrega das credenciais.</li>
                   </ul>
                   <label className="flex items-start gap-2 pt-2 cursor-pointer">
                     <input
@@ -1759,16 +1375,16 @@ export default function ResellerDashboard() {
             <AlertDialogHeader>
               <AlertDialogTitle className="flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5 text-cyan-400" />
-                Requisitos — 1000 Créditos Manus AI
+                Requisitos â€” 1000 CrÃ©ditos Manus AI
               </AlertDialogTitle>
               <AlertDialogDescription asChild>
                 <div className="space-y-3 text-sm text-muted-foreground">
-                  <p className="font-semibold text-foreground">Você está adquirindo:</p>
+                  <p className="font-semibold text-foreground">VocÃª estÃ¡ adquirindo:</p>
                   <ul className="space-y-2 list-none pl-0">
-                    <li className="flex gap-2"><span className="text-cyan-400">●</span> <span><span className="font-bold text-foreground">1000 Créditos Manus AI</span> aplicados na sua conta Manus.</span></li>
-                    <li className="flex gap-2"><span className="text-cyan-400">●</span> Entrega imediata após confirmação manual.</li>
-                    <li className="flex gap-2"><span className="text-cyan-400">●</span> Após o pagamento, envie o comprovante ao ADM no grupo para liberação dos créditos.</li>
-                    <li className="flex gap-2"><span className="text-cyan-400">●</span> Compra não reembolsável após a entrega dos créditos.</li>
+                    <li className="flex gap-2"><span className="text-cyan-400">â—</span> <span><span className="font-bold text-foreground">1000 CrÃ©ditos Manus AI</span> aplicados na sua conta Manus.</span></li>
+                    <li className="flex gap-2"><span className="text-cyan-400">â—</span> Entrega imediata apÃ³s confirmaÃ§Ã£o manual.</li>
+                    <li className="flex gap-2"><span className="text-cyan-400">â—</span> ApÃ³s o pagamento, envie o comprovante ao ADM no grupo para liberaÃ§Ã£o dos crÃ©ditos.</li>
+                    <li className="flex gap-2"><span className="text-cyan-400">â—</span> Compra nÃ£o reembolsÃ¡vel apÃ³s a entrega dos crÃ©ditos.</li>
                   </ul>
                   <label className="flex items-start gap-2 pt-2 cursor-pointer">
                     <input
@@ -1777,7 +1393,7 @@ export default function ResellerDashboard() {
                       onChange={(e) => setManusCreditsAccepted(e.target.checked)}
                       className="mt-1 h-4 w-4 accent-cyan-500"
                     />
-                    <span className="text-foreground">Li, entendi e confirmo a compra de <span className="font-bold">1000 Créditos Manus AI</span>.</span>
+                    <span className="text-foreground">Li, entendi e confirmo a compra de <span className="font-bold">1000 CrÃ©ditos Manus AI</span>.</span>
                   </label>
                 </div>
               </AlertDialogDescription>
@@ -1805,16 +1421,16 @@ export default function ResellerDashboard() {
             <AlertDialogHeader>
               <AlertDialogTitle className="flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5 text-indigo-400" />
-                Requisitos — Gemini Pro 18 Meses
+                Requisitos â€” Gemini Pro 18 Meses
               </AlertDialogTitle>
               <AlertDialogDescription asChild>
                 <div className="space-y-3 text-sm text-muted-foreground">
-                  <p className="font-semibold text-foreground">Você está adquirindo:</p>
+                  <p className="font-semibold text-foreground">VocÃª estÃ¡ adquirindo:</p>
                   <ul className="space-y-2 list-none pl-0">
-                    <li className="flex gap-2"><span className="text-indigo-400">●</span> <span><span className="font-bold text-foreground">Gemini Pro — 18 meses de assinatura</span> ativados direto na sua conta Google.</span></li>
-                    <li className="flex gap-2"><span className="text-indigo-400">●</span> Inclui 5 TB no Google One, Gemini 3.1 Pro + Nano Banana Pro, Veo 3, Flow, Whisk, NotebookLM, Deep Research, Code Assist, Antigravity e CLI.</li>
-                    <li className="flex gap-2"><span className="text-indigo-400">●</span> Ativação manual pelo ADM após o pagamento — envie o comprovante no grupo com o email da sua conta Google.</li>
-                    <li className="flex gap-2"><span className="text-indigo-400">●</span> Compra não reembolsável após a ativação.</li>
+                    <li className="flex gap-2"><span className="text-indigo-400">â—</span> <span><span className="font-bold text-foreground">Gemini Pro â€” 18 meses de assinatura</span> ativados direto na sua conta Google.</span></li>
+                    <li className="flex gap-2"><span className="text-indigo-400">â—</span> Inclui 5 TB no Google One, Gemini 3.1 Pro + Nano Banana Pro, Veo 3, Flow, Whisk, NotebookLM, Deep Research, Code Assist, Antigravity e CLI.</li>
+                    <li className="flex gap-2"><span className="text-indigo-400">â—</span> AtivaÃ§Ã£o manual pelo ADM apÃ³s o pagamento â€” envie o comprovante no grupo com o email da sua conta Google.</li>
+                    <li className="flex gap-2"><span className="text-indigo-400">â—</span> Compra nÃ£o reembolsÃ¡vel apÃ³s a ativaÃ§Ã£o.</li>
                   </ul>
                   <label className="flex items-start gap-2 pt-2 cursor-pointer">
                     <input
@@ -1851,17 +1467,17 @@ export default function ResellerDashboard() {
             <AlertDialogHeader>
               <AlertDialogTitle className="flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5 text-purple-400" />
-                Requisitos — Conta Seedance 8.500K
+                Requisitos â€” Conta Seedance 8.500K
               </AlertDialogTitle>
               <AlertDialogDescription asChild>
                 <div className="space-y-3 text-sm text-muted-foreground">
-                  <p className="font-semibold text-foreground">Você está adquirindo:</p>
+                  <p className="font-semibold text-foreground">VocÃª estÃ¡ adquirindo:</p>
                   <ul className="space-y-2 list-none pl-0">
-                    <li className="flex gap-2"><span className="text-purple-400">●</span> <span><span className="font-bold text-foreground">1 Conta Seedance</span> com <span className="font-bold text-foreground">8.500K créditos</span> garantidos.</span></li>
-                    <li className="flex gap-2"><span className="text-purple-400">●</span> Geração ultrarrápida de vídeos profissionais em qualidade cinematográfica.</li>
-                    <li className="flex gap-2"><span className="text-purple-400">●</span> Acesso completo à conta premium (login + senha entregues pelo ADM).</li>
-                    <li className="flex gap-2"><span className="text-purple-400">●</span> Entrega manual pelo ADM após o pagamento — envie o comprovante no grupo do WhatsApp.</li>
-                    <li className="flex gap-2"><span className="text-purple-400">●</span> Compra não reembolsável após a entrega.</li>
+                    <li className="flex gap-2"><span className="text-purple-400">â—</span> <span><span className="font-bold text-foreground">1 Conta Seedance</span> com <span className="font-bold text-foreground">8.500K crÃ©ditos</span> garantidos.</span></li>
+                    <li className="flex gap-2"><span className="text-purple-400">â—</span> GeraÃ§Ã£o ultrarrÃ¡pida de vÃ­deos profissionais em qualidade cinematogrÃ¡fica.</li>
+                    <li className="flex gap-2"><span className="text-purple-400">â—</span> Acesso completo Ã  conta premium (login + senha entregues pelo ADM).</li>
+                    <li className="flex gap-2"><span className="text-purple-400">â—</span> Entrega manual pelo ADM apÃ³s o pagamento â€” envie o comprovante no grupo do WhatsApp.</li>
+                    <li className="flex gap-2"><span className="text-purple-400">â—</span> Compra nÃ£o reembolsÃ¡vel apÃ³s a entrega.</li>
                   </ul>
                   <label className="flex items-start gap-2 pt-2 cursor-pointer">
                     <input
@@ -1898,17 +1514,17 @@ export default function ResellerDashboard() {
             <AlertDialogHeader>
               <AlertDialogTitle className="flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5 text-purple-400" />
-                Requisitos — CapCut Pro 30 dias
+                Requisitos â€” CapCut Pro 30 dias
               </AlertDialogTitle>
               <AlertDialogDescription asChild>
                 <div className="space-y-3 text-sm text-muted-foreground">
-                  <p className="font-semibold text-foreground">Você está adquirindo:</p>
+                  <p className="font-semibold text-foreground">VocÃª estÃ¡ adquirindo:</p>
                   <ul className="space-y-2 list-none pl-0">
-                    <li className="flex gap-2"><span className="text-purple-400">●</span> <span><span className="font-bold text-foreground">Acesso CapCut Pro</span> por <span className="font-bold text-foreground">30 dias</span> (login e senha).</span></li>
-                    <li className="flex gap-2"><span className="text-purple-400">●</span> Todos os recursos PRO liberados, exportação em 4K e sem marca d'água.</li>
-                    <li className="flex gap-2"><span className="text-purple-400">●</span> Acesso completo à conta premium (login + senha entregues pelo ADM).</li>
-                    <li className="flex gap-2"><span className="text-purple-400">●</span> Entrega manual pelo ADM via WhatsApp após o pagamento — envie o comprovante no grupo.</li>
-                    <li className="flex gap-2"><span className="text-purple-400">●</span> Compra não reembolsável após a entrega.</li>
+                    <li className="flex gap-2"><span className="text-purple-400">â—</span> <span><span className="font-bold text-foreground">Acesso CapCut Pro</span> por <span className="font-bold text-foreground">30 dias</span> (login e senha).</span></li>
+                    <li className="flex gap-2"><span className="text-purple-400">â—</span> Todos os recursos PRO liberados, exportaÃ§Ã£o em 4K e sem marca d'Ã¡gua.</li>
+                    <li className="flex gap-2"><span className="text-purple-400">â—</span> Acesso completo Ã  conta premium (login + senha entregues pelo ADM).</li>
+                    <li className="flex gap-2"><span className="text-purple-400">â—</span> Entrega manual pelo ADM via WhatsApp apÃ³s o pagamento â€” envie o comprovante no grupo.</li>
+                    <li className="flex gap-2"><span className="text-purple-400">â—</span> Compra nÃ£o reembolsÃ¡vel apÃ³s a entrega.</li>
                   </ul>
                   <label className="flex items-start gap-2 pt-2 cursor-pointer">
                     <input
@@ -1945,23 +1561,23 @@ export default function ResellerDashboard() {
             <AlertDialogHeader>
               <AlertDialogTitle className="flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5 text-violet-400" />
-                Requisitos — Lovable AI Pro | Conta Privada
+                Requisitos â€” Lovable AI Pro | Conta Privada
               </AlertDialogTitle>
               <AlertDialogDescription asChild>
                 <div className="space-y-3 text-sm text-muted-foreground">
-                  <p className="font-semibold text-foreground">O que está incluído:</p>
+                  <p className="font-semibold text-foreground">O que estÃ¡ incluÃ­do:</p>
                   <ul className="space-y-2 list-none pl-0">
-                    <li className="flex gap-2"><span className="text-violet-400">●</span> <span>Plano <span className="font-bold text-foreground">Pro de 1 mês</span> (30 dias).</span></li>
-                    <li className="flex gap-2"><span className="text-violet-400">●</span> <span><span className="font-bold text-foreground">105 créditos</span> inclusos.</span></li>
-                    <li className="flex gap-2"><span className="text-violet-400">●</span> Conta segura e privada, com acesso total ao e-mail incluído.</li>
-                    <li className="flex gap-2"><span className="text-violet-400">●</span> Acesso imediato — entrega automática após a confirmação do pagamento.</li>
+                    <li className="flex gap-2"><span className="text-violet-400">â—</span> <span>Plano <span className="font-bold text-foreground">Pro de 1 mÃªs</span> (30 dias).</span></li>
+                    <li className="flex gap-2"><span className="text-violet-400">â—</span> <span><span className="font-bold text-foreground">105 crÃ©ditos</span> inclusos.</span></li>
+                    <li className="flex gap-2"><span className="text-violet-400">â—</span> Conta segura e privada, com acesso total ao e-mail incluÃ­do.</li>
+                    <li className="flex gap-2"><span className="text-violet-400">â—</span> Acesso imediato â€” entrega automÃ¡tica apÃ³s a confirmaÃ§Ã£o do pagamento.</li>
                   </ul>
                   <p className="font-semibold text-foreground pt-1">IMPORTANTE:</p>
                   <ul className="space-y-2 list-none pl-0">
-                    <li className="flex gap-2"><span className="text-amber-400">●</span> Transferências de workspace e de projetos não são garantidas. Não oferecemos garantia para problemas relacionados a transferências.</li>
-                    <li className="flex gap-2"><span className="text-amber-400">●</span> Se aparecer a mensagem de "Atividade Suspeita" ao fazer login, tente usar uma VPN e faça login novamente.</li>
-                    <li className="flex gap-2"><span className="text-amber-400">●</span> Transferências podem parar de funcionar devido a mudanças nas políticas e sistemas da Lovable.</li>
-                    <li className="flex gap-2"><span className="text-amber-400">●</span> Precisa de ajuda? Fale com o suporte a qualquer momento.</li>
+                    <li className="flex gap-2"><span className="text-amber-400">â—</span> TransferÃªncias de workspace e de projetos nÃ£o sÃ£o garantidas. NÃ£o oferecemos garantia para problemas relacionados a transferÃªncias.</li>
+                    <li className="flex gap-2"><span className="text-amber-400">â—</span> Se aparecer a mensagem de "Atividade Suspeita" ao fazer login, tente usar uma VPN e faÃ§a login novamente.</li>
+                    <li className="flex gap-2"><span className="text-amber-400">â—</span> TransferÃªncias podem parar de funcionar devido a mudanÃ§as nas polÃ­ticas e sistemas da Lovable.</li>
+                    <li className="flex gap-2"><span className="text-amber-400">â—</span> Precisa de ajuda? Fale com o suporte a qualquer momento.</li>
                   </ul>
                   <label className="flex items-start gap-2 pt-2 cursor-pointer">
                     <input
@@ -1970,7 +1586,7 @@ export default function ResellerDashboard() {
                       onChange={(e) => setLovableAccountAccepted(e.target.checked)}
                       className="mt-1 h-4 w-4 accent-purple-500"
                     />
-                    <span className="text-foreground">Li, entendi e confirmo a compra da <span className="font-bold">Conta Lovable AI Pro (105 créditos)</span>.</span>
+                    <span className="text-foreground">Li, entendi e confirmo a compra da <span className="font-bold">Conta Lovable AI Pro (105 crÃ©ditos)</span>.</span>
                   </label>
                 </div>
               </AlertDialogDescription>
@@ -2009,7 +1625,7 @@ export default function ResellerDashboard() {
                 Pagamento PIX
               </DialogTitle>
               <DialogDescription>
-                Escaneie o QR Code ou copie o código PIX para pagar
+                Escaneie o QR Code ou copie o cÃ³digo PIX para pagar
               </DialogDescription>
             </DialogHeader>
 
@@ -2022,7 +1638,7 @@ export default function ResellerDashboard() {
                 {lastOrderWasLovableAccount ? (
                   <>
                     <p className="text-sm text-muted-foreground text-center">
-                      <span className="font-semibold text-foreground">Conta Lovable AI Pro (105 créditos)</span> reservada. Entre no grupo, chame o ADM e envie o comprovante para receber o login, a senha e o acesso ao e-mail da conta.
+                      <span className="font-semibold text-foreground">Conta Lovable AI Pro (105 crÃ©ditos)</span> reservada. Entre no grupo, chame o ADM e envie o comprovante para receber o login, a senha e o acesso ao e-mail da conta.
                     </p>
                     <Button variant="ghost" size="sm" onClick={() => { setIsPixModalOpen(false); setPixOrder(null); setLastOrderWasLovableAccount(false); }}>
                       Fechar
@@ -2049,7 +1665,7 @@ export default function ResellerDashboard() {
                 ) : lastOrderWasGeminiPro ? (
                   <>
                     <p className="text-sm text-muted-foreground text-center">
-                      <span className="font-semibold text-foreground">Gemini Pro 18 Meses</span> reservado. Entre no grupo, chame o ADM e envie o comprovante com o email da sua conta Google para ativação.
+                      <span className="font-semibold text-foreground">Gemini Pro 18 Meses</span> reservado. Entre no grupo, chame o ADM e envie o comprovante com o email da sua conta Google para ativaÃ§Ã£o.
                     </p>
                     <Button variant="ghost" size="sm" onClick={() => { setIsPixModalOpen(false); setPixOrder(null); setLastOrderWasGeminiPro(false); }}>
                       Fechar
@@ -2058,7 +1674,7 @@ export default function ResellerDashboard() {
                 ) : lastOrderWasManusCredits ? (
                   <>
                     <p className="text-sm text-muted-foreground text-center">
-                      <span className="font-semibold text-foreground">1000 Créditos Manus AI</span> recebidos. Entre no grupo, chame o ADM e envie o comprovante para liberação dos créditos na sua conta Manus.
+                      <span className="font-semibold text-foreground">1000 CrÃ©ditos Manus AI</span> recebidos. Entre no grupo, chame o ADM e envie o comprovante para liberaÃ§Ã£o dos crÃ©ditos na sua conta Manus.
                     </p>
                     <Button variant="ghost" size="sm" onClick={() => { setIsPixModalOpen(false); setPixOrder(null); setLastOrderWasManusCredits(false); }}>
                       Fechar
@@ -2067,7 +1683,7 @@ export default function ResellerDashboard() {
                 ) : lastOrderWasComboAccount ? (
                   <>
                     <p className="text-sm text-muted-foreground text-center">
-                      Combo <span className="font-semibold text-foreground">Conta Lovable (Conta + 300 Créditos + 1 Ano PRO)</span> recebido. Entre no grupo, chame o ADM e envie o comprovante para receber o login e a senha da conta.
+                      Combo <span className="font-semibold text-foreground">Conta Lovable (Conta + 300 CrÃ©ditos + 1 Ano PRO)</span> recebido. Entre no grupo, chame o ADM e envie o comprovante para receber o login e a senha da conta.
                     </p>
                     <Button variant="ghost" size="sm" onClick={() => { setIsPixModalOpen(false); setPixOrder(null); setLastOrderWasComboAccount(false); }}>
                       Fechar
@@ -2076,7 +1692,7 @@ export default function ResellerDashboard() {
                 ) : lastOrderWasComboChampion ? (
                   <>
                     <p className="text-sm text-muted-foreground text-center">
-                      Combo <span className="font-semibold text-foreground">Copa do Brasil (300 Créditos + 1 Ano PRO Lite + Chave Vitalícia)</span> recebido. Entre no grupo, chame o ADM e envie o comprovante para liberação do combo.
+                      Combo <span className="font-semibold text-foreground">Copa do Brasil (300 CrÃ©ditos + 1 Ano PRO Lite + Chave VitalÃ­cia)</span> recebido. Entre no grupo, chame o ADM e envie o comprovante para liberaÃ§Ã£o do combo.
                     </p>
                     <Button variant="ghost" size="sm" onClick={() => { setIsPixModalOpen(false); setPixOrder(null); setLastOrderWasComboChampion(false); }}>
                       Fechar
@@ -2085,7 +1701,7 @@ export default function ResellerDashboard() {
                 ) : lastOrderWasCombo ? (
                   <>
                     <p className="text-sm text-muted-foreground text-center">
-                      Combo <span className="font-semibold text-foreground">300 Créditos + 1 Ano PRO Lite</span> recebido. Entre no grupo, chame o ADM e envie o comprovante para ativação do combo.
+                      Combo <span className="font-semibold text-foreground">300 CrÃ©ditos + 1 Ano PRO Lite</span> recebido. Entre no grupo, chame o ADM e envie o comprovante para ativaÃ§Ã£o do combo.
                     </p>
                     <Button variant="ghost" size="sm" onClick={() => { setIsPixModalOpen(false); setPixOrder(null); setLastOrderWasCombo(false); }}>
                       Fechar
@@ -2094,7 +1710,7 @@ export default function ResellerDashboard() {
                 ) : (
                   <>
                     <p className="text-sm text-muted-foreground text-center">
-                      {pixOrder?.quantity} crédito(s) foram adicionados à sua conta.
+                      {pixOrder?.quantity} crÃ©dito(s) foram adicionados Ã  sua conta.
                     </p>
                     <Button onClick={() => { setIsPixModalOpen(false); setPixOrder(null); }} className="bg-gradient text-primary-foreground">
                       Fechar
@@ -2106,7 +1722,7 @@ export default function ResellerDashboard() {
               <div className="space-y-4">
                 <div className="text-center space-y-2">
                   <p className="text-sm text-muted-foreground">
-                    <span className="font-semibold text-foreground">{pixOrder.quantity}</span> chave(s) × R$ {pixOrder.price_per_key.toFixed(2)}
+                    <span className="font-semibold text-foreground">{pixOrder.quantity}</span> chave(s) Ã— R$ {pixOrder.price_per_key.toFixed(2)}
                   </p>
                   <p className="text-2xl font-bold text-gradient">
                     R$ {(pixOrder.amount_cents / 100).toFixed(2)}
@@ -2126,7 +1742,7 @@ export default function ResellerDashboard() {
 
                 {pixOrder.qr_code_text && (
                   <div className="space-y-2">
-                    <Label className="text-xs text-muted-foreground">Código PIX (Copia e Cola)</Label>
+                    <Label className="text-xs text-muted-foreground">CÃ³digo PIX (Copia e Cola)</Label>
                     <div className="flex gap-2">
                       <Input
                         readOnly
@@ -2138,7 +1754,7 @@ export default function ResellerDashboard() {
                         size="icon"
                         onClick={() => {
                           navigator.clipboard.writeText(pixOrder.qr_code_text);
-                          toast({ title: 'Copiado!', description: 'Código PIX copiado.' });
+                          toast({ title: 'Copiado!', description: 'CÃ³digo PIX copiado.' });
                         }}
                       >
                         <Copy className="h-4 w-4" />
@@ -2196,14 +1812,14 @@ function StatusBadge({ status }: { status: string }) {
 function ExpiryInfo({ expiresAt, durationHours, firstActivatedAt }: { expiresAt: string; durationHours?: number | null; firstActivatedAt?: string | null }) {
   if (durationHours && !firstActivatedAt) {
     const totalMinutes = durationHours * 60;
-    if (totalMinutes < 60) return <span className="text-xs text-muted-foreground">⏳ {Math.round(totalMinutes)}min (aguardando)</span>;
-    return <span className="text-xs text-muted-foreground">⏳ {Math.round(durationHours)}h (aguardando)</span>;
+    if (totalMinutes < 60) return <span className="text-xs text-muted-foreground">â³ {Math.round(totalMinutes)}min (aguardando)</span>;
+    return <span className="text-xs text-muted-foreground">â³ {Math.round(durationHours)}h (aguardando)</span>;
   }
   const now = new Date();
   const expiry = parseISO(expiresAt);
   if (expiry < now) return <span className="text-xs text-destructive">Expirado</span>;
   const days = differenceInDays(expiry, now);
-  if (days > 365) return <span className="text-xs text-muted-foreground">∞</span>;
+  if (days > 365) return <span className="text-xs text-muted-foreground">âˆž</span>;
   if (days > 0) return <span className="text-xs text-muted-foreground">{days}d</span>;
   const hours = differenceInHours(expiry, now);
   if (hours > 0) return <span className="text-xs text-warning">{hours}h</span>;
