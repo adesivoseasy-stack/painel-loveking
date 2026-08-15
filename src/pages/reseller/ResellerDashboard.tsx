@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ResellerLayout } from '@/components/reseller/ResellerLayout';
 import { useResellerStats, useResellerLicenses, useResellerCreateLicense, useUpdateCustomerName } from '@/hooks/useResellerLicenses';
@@ -650,46 +650,23 @@ export default function ResellerDashboard() {
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          {isLifetimePromoActive ? (
-                            <span className="bg-primary/20 text-primary border border-primary/30 text-[9px] font-black uppercase tracking-[0.15em] px-2 py-0.5 rounded-md animate-pulse">
-                              ⚡ Promoção
-                            </span>
-                          ) : (
-                            <span className="bg-white/[0.06] text-white/50 border border-white/10 text-[9px] font-black uppercase tracking-[0.15em] px-2 py-0.5 rounded-md">
-                              Premium
-                            </span>
-                          )}
+                          <span className="bg-primary/20 text-primary border border-primary/30 text-[9px] font-black uppercase tracking-[0.15em] px-2 py-0.5 rounded-md animate-pulse">
+                            ⚡ Promoção
+                          </span>
                           <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.15em]">∞ Vitalícia</span>
                         </div>
                         <h3 className="text-lg sm:text-xl font-black text-white">Chave <span className="text-primary">Vitalícia</span></h3>
                         <p className="text-xs text-white/40 mt-0.5 max-w-sm">1 chave com validade ilimitada — produto premium para revenda.</p>
-                        {isLifetimePromoActive && !['wallacesouzasantos@gmail.com','ecombrunobp@gmail.com','techmind.pro4.0@gmail.com'].includes(user?.email?.toLowerCase() ?? '') && (
-                          <p className="text-[11px] font-bold text-primary mt-1.5 flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            Termina em <span className="font-mono">{lifetimePromoTimeLeft}</span>
-                          </p>
-                        )}
                       </div>
                     </div>
 
                     {/* Right: price + button */}
                     <div className="flex flex-col items-stretch sm:items-end gap-3 w-full sm:w-auto shrink-0">
-                      {isLifetimePromoActive ? (
-                        <div className="sm:text-right">
-                          <p className="text-xs text-white/30 line-through">R$ 147,90</p>
-                          <p className="text-2xl font-black text-primary">
-                            {['wallacesouzasantos@gmail.com','ecombrunobp@gmail.com','techmind.pro4.0@gmail.com'].includes(user?.email?.toLowerCase() ?? '') ? 'R$ 29,90' : `R$ ${Number(vitaliciaPromo?.price || 59.90).toFixed(2).replace('.', ',')}`}
-                          </p>
-                          <p className="text-[10px] text-primary/70 font-bold">pagamento único</p>
-                        </div>
-                      ) : (
-                        <div className="sm:text-right">
-                          <p className="text-2xl font-black text-white">
-                            {['wallacesouzasantos@gmail.com','ecombrunobp@gmail.com','techmind.pro4.0@gmail.com'].includes(user?.email?.toLowerCase() ?? '') ? 'R$ 29,90' : 'R$ 147,90'}
-                          </p>
-                          <p className="text-[10px] text-white/30">pagamento único</p>
-                        </div>
-                      )}
+                      <div className="sm:text-right">
+                        <p className="text-xs text-white/30 line-through">R$ 147,90</p>
+                        <p className="text-2xl font-black text-primary">R$ 29,90</p>
+                        <p className="text-[10px] text-primary/70 font-bold">pagamento único</p>
+                      </div>
                       <Button
                         disabled={loadingQty !== null}
                         onClick={handleBuyLifetime}

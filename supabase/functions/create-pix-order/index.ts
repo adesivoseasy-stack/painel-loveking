@@ -259,19 +259,10 @@ Deno.serve(async (req) => {
       promo = false
     } else if (lifetime) {
       // Chave Vitalícia: 1 chave com validade ilimitada (100 anos)
-      // Promoção Relâmpago: R$ 59,90 até 31/07/2026 às 20h, depois R$ 147,90
+      // Promoção ativa: R$ 29,90
       quantity = 1
-      // Override individual: wallacesouzasantos@gmail.com paga R$ 29,90
-      const { data: buyerData } = await adminClient.auth.admin.getUserById(userId)
-      const buyerEmail = (buyerData?.user?.email || '').toLowerCase()
-      if (buyerEmail === 'wallacesouzasantos@gmail.com' || buyerEmail === 'ecombrunobp@gmail.com' || buyerEmail === 'techmind.pro4.0@gmail.com') {
-        totalReais = 29.90
-      } else {
-        const LIFETIME_PROMO_END = new Date('2026-08-04T22:00:00-03:00').getTime()
-        const isLifetimePromo = Date.now() < LIFETIME_PROMO_END
-        totalReais = isLifetimePromo ? 59.90 : 147.90
-      }
-      pricePerKey = totalReais
+      totalReais = 29.90
+      pricePerKey = 29.90
       promo = false
     } else if (promo) {
       // Promoção de Inauguração: pacote fixo 10 chaves por R$249,90 (24h)
@@ -461,8 +452,16 @@ async function calculateTotal(adminClient: any, planType: string, quantity: numb
   }
 
   const DEFAULT_TIERS: Record<string, { quantity: number; pricePerKey: number }[]> = {
-    '197': [{ quantity: 1, pricePerKey: 34.90 }],
-    '297': [{ quantity: 1, pricePerKey: 34.90 }],
+    '197': [
+      { quantity: 1, pricePerKey: 19.90 },
+      { quantity: 2, pricePerKey: 18.95 },
+      { quantity: 3, pricePerKey: 32.33 },
+    ],
+    '297': [
+      { quantity: 1, pricePerKey: 19.90 },
+      { quantity: 2, pricePerKey: 18.95 },
+      { quantity: 3, pricePerKey: 32.33 },
+    ],
   }
 
   const activeTiers = tiers.length > 0 ? tiers.sort((a, b) => a.quantity - b.quantity) : (DEFAULT_TIERS[planType] || DEFAULT_TIERS['197'])
