@@ -88,14 +88,15 @@ Deno.serve(async (req) => {
         })
         .eq("id", resellerId);
 
-      // Add reseller role
-      await serviceClient.from("user_roles").upsert(
-        {
-          user_id: profile.user_id,
-          role: "reseller",
-        },
-        { onConflict: "user_id,role" }
+      // Add reseller role — usa insert direto; se já existe ignora o erro de duplicata
+      const { error: roleError } = await serviceClient.from("user_roles").insert(
+        { user_id: profile.user_id, role: "reseller" }
       );
+      // Ignora erro de chave duplicada (código 23505) — o role já existe, tudo certo
+      if (roleError && !roleError.code?.includes('23505') && roleError.code !== '409') {
+        console.error("Error adding reseller role:", roleError);
+      }
+
 
       return new Response(
         JSON.stringify({ success: true, message: "Revendedor aprovado" }),

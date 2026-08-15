@@ -170,33 +170,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signUp = async (email: string, password: string) => {
-    const redirectUrl = `${window.location.origin}/`;
-    
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-      },
-    });
-    
-    if (error) {
-      return { error };
-    }
-
-    // Cria perfil de revendedor pendente para aprovação
-    // (necessário para o usuário aparecer na lista de aprovações do admin)
     try {
-      await supabase.functions.invoke('register-reseller-self', {
-        body: {
-          name: email.split('@')[0],
-        },
+      // Usa edge function com Admin API para evitar rate limit do Supabase Auth
+      const { data, error: fnError } = await supabase.functions.invoke('register-user', {
+        body: { email, password, name: email.split('@')[0] },
       });
-    } catch (e) {
-      console.error('[signUp] register-reseller-self failed:', e);
-    }
 
-    return { error: null, needsAdminRole: true };
+      if (fnError) {
+        return { error: new Error(fnError.message || 'Erro ao cadastrar') };
+      }
+
+      // Verifica erro retornado no body
+      if (data?.error) {
+        return { error: new Error(data.error) };
+      }
+
+      // Faz login automático após cadastro bem-sucedido
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInError) {
+        // Cadastro ok mas login falhou — pede para logar manualmente
+        return { error: null, needsAdminRole: true };
+      }
+
+      return { error: null, needsAdminRole: true };
+    } catch (e: any) {
+      return { error: new Error(e?.message || 'Erro ao cadastrar') };
+    }
   };
 
   const signOut = async () => {

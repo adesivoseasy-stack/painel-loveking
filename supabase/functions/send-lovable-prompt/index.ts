@@ -327,14 +327,61 @@ async function uploadZipToLovable(token: string, projectId: string, file: Extens
 // Isso garante que, mesmo que alguém copie a extensão e troque a
 // anon key, a Edge Function rejeitará qualquer licença que não
 // esteja cadastrada neste projeto específico.
+//
+// PROTEÇÕES ANTI-PROXY / ANTI-CLONE:
+// 1. Rate limit em memória (30 req/min por chave)
+// 2. Tracking de IP com auto-revogação (>3 IPs em 24h)
+// 3. Incremento de messages_used
+// 4. Log de auditoria em license_logs
 // ============================================================
 
 const SUPABASE_URL    = Deno.env.get('SUPABASE_URL')    || ''
 const SUPABASE_SERVICE = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
 
+// ── Rate Limit em memória ──────────────────────────────────────────────────
+const RATE_LIMIT_WINDOW_MS = 60_000  // 1 minuto
+const RATE_LIMIT_MAX       = 30      // max 30 requests por minuto por chave
+const MAX_DISTINCT_IPS_24H = 3       // max 3 IPs distintos em 24h
+
+interface RateBucket {
+  count: number
+  resetAt: number
+}
+const _rateLimitMap = new Map<string, RateBucket>()
+
+function checkRateLimit(key: string): boolean {
+  const now = Date.now()
+  const bucket = _rateLimitMap.get(key)
+  if (!bucket || now >= bucket.resetAt) {
+    _rateLimitMap.set(key, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS })
+    return true
+  }
+  bucket.count++
+  return bucket.count <= RATE_LIMIT_MAX
+}
+
+// Limpa buckets expirados a cada 5 min para evitar memory leak
+setInterval(() => {
+  const now = Date.now()
+  for (const [key, bucket] of _rateLimitMap) {
+    if (now >= bucket.resetAt) _rateLimitMap.delete(key)
+  }
+}, 300_000)
+// ──────────────────────────────────────────────────────────────────────────
+
+// Helper: headers para REST API do Supabase (service_role)
+function supabaseHeaders(): Record<string, string> {
+  return {
+    'Content-Type': 'application/json',
+    'apikey': SUPABASE_SERVICE,
+    'Authorization': `Bearer ${SUPABASE_SERVICE}`,
+    'Prefer': 'return=representation',
+  }
+}
+
 interface LicenseResult {
   ok: boolean
-  reason?: string   // 'license_invalid' | 'device_mismatch' | 'server_error'
+  reason?: string   // 'license_invalid' | 'device_mismatch' | 'rate_limited' | 'ip_abuse' | 'server_error'
   error?: string
 }
 
@@ -342,40 +389,36 @@ async function validateLicense(
   licenseKey: string,
   email: string,
   hwid: string,
+  clientIp: string,
+  projectId?: string,
 ): Promise<LicenseResult> {
   // Valida parâmetros mínimos
   if (!licenseKey) {
     return { ok: false, reason: 'license_invalid', error: 'license_key ausente' }
   }
 
+  // ── 1. RATE LIMIT em memória ──────────────────────────────────────────
+  if (!checkRateLimit(licenseKey)) {
+    console.warn(`[license] rate limit excedido para ${licenseKey.slice(0, 8)}... (${RATE_LIMIT_MAX}/${RATE_LIMIT_WINDOW_MS}ms)`)
+    return { ok: false, reason: 'rate_limited', error: 'Muitas requisições. Aguarde um momento.' }
+  }
+
   if (!SUPABASE_URL || !SUPABASE_SERVICE) {
-    // Sem env vars não conseguimos validar — fail-open para não derrubar o serviço
     console.warn('[license] SUPABASE_URL ou SUPABASE_SERVICE_ROLE_KEY não configurados — fail-open')
     return { ok: true }
   }
 
   try {
     // Query direta via REST API do Supabase usando service_role key
-    // para evitar depender de RLS ou de a extensão ter a chave correta
-    const url = `${SUPABASE_URL}/rest/v1/licenses?license_key=eq.${encodeURIComponent(licenseKey)}&select=id,license_key,email,hwid,status,expires_at&limit=1`
-    const resp = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_SERVICE,
-        'Authorization': `Bearer ${SUPABASE_SERVICE}`,
-        'Prefer': 'return=representation',
-      },
-    })
+    const url = `${SUPABASE_URL}/rest/v1/licenses?license_key=eq.${encodeURIComponent(licenseKey)}&select=id,license_key,email,hwid,status,expires_at,messages_used,max_messages&limit=1`
+    const resp = await fetch(url, { method: 'GET', headers: supabaseHeaders() })
 
     if (resp.status === 429) {
-      // Rate limit do Supabase — fail-open temporário
       console.warn('[license] rate limit no Supabase — fail-open')
       return { ok: true }
     }
 
     if (resp.status >= 500) {
-      // Erro do servidor Supabase — fail-open temporário
       console.warn('[license] erro 5xx no Supabase —', resp.status, '— fail-open')
       return { ok: true }
     }
@@ -409,15 +452,6 @@ async function validateLicense(
       }
     }
 
-    // Verifica email se o banco tem e foi enviado (REMOVIDO A PEDIDO DO USUÁRIO)
-    /*
-    if (email && license.email && String(license.email).toLowerCase() !== String(email).toLowerCase()) {
-      console.warn('[license] email não confere com o cadastrado')
-      return { ok: false, reason: 'license_invalid', error: 'Email não corresponde à licença' }
-    }
-    */
-
-
     // Verifica HWID (device binding) — device_mismatch NÃO força logout
     if (hwid && license.hwid && license.hwid !== hwid) {
       console.warn('[license] device_mismatch: hwid enviado difere do cadastrado')
@@ -429,22 +463,108 @@ async function validateLicense(
       try {
         await fetch(`${SUPABASE_URL}/rest/v1/licenses?id=eq.${license.id}`, {
           method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': SUPABASE_SERVICE,
-            'Authorization': `Bearer ${SUPABASE_SERVICE}`,
-          },
-          body: JSON.stringify({ hwid }),
+          headers: supabaseHeaders(),
+          body: JSON.stringify({ hwid, hwid_set_at: new Date().toISOString() }),
         })
       } catch (_) {
         // Falha silenciosa — não impede o uso
       }
     }
 
+    // ── 2. TRACKING DE IP + AUTO-REVOGAÇÃO ────────────────────────────────
+    // Registra IP e verifica se há abuso (>3 IPs distintos em 24h)
+    if (clientIp && clientIp !== 'unknown') {
+      try {
+        // Upsert na tabela license_ip_tracking
+        await fetch(`${SUPABASE_URL}/rest/v1/license_ip_tracking`, {
+          method: 'POST',
+          headers: { ...supabaseHeaders(), 'Prefer': 'resolution=merge-duplicates' },
+          body: JSON.stringify({
+            license_id: license.id,
+            ip_address: clientIp,
+            last_used_at: new Date().toISOString(),
+            message_count: 1,
+          }),
+        })
+
+        // Conta IPs distintos nas últimas 24h
+        const since24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+        const ipCountResp = await fetch(
+          `${SUPABASE_URL}/rest/v1/license_ip_tracking?license_id=eq.${license.id}&last_used_at=gte.${encodeURIComponent(since24h)}&select=ip_address`,
+          { method: 'GET', headers: supabaseHeaders() }
+        )
+
+        if (ipCountResp.ok) {
+          const ipRows: any[] = await ipCountResp.json()
+          const distinctIps = new Set(ipRows.map((r: any) => r.ip_address)).size
+
+          if (distinctIps > MAX_DISTINCT_IPS_24H) {
+            console.warn(`[license] ⚠️ IP ABUSE detectado: ${licenseKey.slice(0, 8)}... usado de ${distinctIps} IPs em 24h (max: ${MAX_DISTINCT_IPS_24H})`)
+
+            // Auto-revogar licença
+            await fetch(`${SUPABASE_URL}/rest/v1/licenses?id=eq.${license.id}`, {
+              method: 'PATCH',
+              headers: supabaseHeaders(),
+              body: JSON.stringify({ status: 'revoked', revoked_at: new Date().toISOString() }),
+            })
+
+            // Log de auditoria
+            await fetch(`${SUPABASE_URL}/rest/v1/license_logs`, {
+              method: 'POST',
+              headers: supabaseHeaders(),
+              body: JSON.stringify({
+                license_id: license.id,
+                action: 'auto_revoked_ip_abuse',
+                details: { distinct_ips: distinctIps, max_allowed: MAX_DISTINCT_IPS_24H, trigger_ip: clientIp },
+              }),
+            })
+
+            return { ok: false, reason: 'license_invalid', error: 'Licença revogada por uso em múltiplos dispositivos/IPs' }
+          }
+        }
+      } catch (ipErr) {
+        // Falha no tracking de IP — não impede o uso (fail-open)
+        console.warn('[license] falha no tracking de IP (fail-open):', ipErr)
+      }
+    }
+
+    // ── 3. INCREMENTAR messages_used ──────────────────────────────────────
+    try {
+      const newCount = (Number(license.messages_used) || 0) + 1
+      await fetch(`${SUPABASE_URL}/rest/v1/licenses?id=eq.${license.id}`, {
+        method: 'PATCH',
+        headers: supabaseHeaders(),
+        body: JSON.stringify({
+          messages_used: newCount,
+          last_message_at: new Date().toISOString(),
+        }),
+      })
+    } catch (_) {
+      // Falha silenciosa — não impede o uso
+    }
+
+    // ── 4. LOG DE AUDITORIA ──────────────────────────────────────────────
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/license_logs`, {
+        method: 'POST',
+        headers: supabaseHeaders(),
+        body: JSON.stringify({
+          license_id: license.id,
+          action: 'prompt_sent',
+          details: {
+            ip: clientIp || 'unknown',
+            project_id: projectId || 'unknown',
+            hwid: hwid || 'unknown',
+          },
+        }),
+      })
+    } catch (_) {
+      // Log falhou — não impede o uso
+    }
+
     return { ok: true }
 
   } catch (err) {
-    // Timeout ou erro de rede ao contactar o Supabase — fail-open
     console.warn('[license] exceção ao validar licença (fail-open):', err)
     return { ok: true }
   }
@@ -472,25 +592,34 @@ serve(async (req) => {
       return json({ ok: false, success: false, error: "Missing token or projectId", fallback: false }, 400)
     }
 
+    // ── Extrair IP do cliente ────────────────────────────────────────────────
+    const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+                  || req.headers.get('x-real-ip')
+                  || req.headers.get('cf-connecting-ip')
+                  || 'unknown'
+
     // ── VALIDAÇÃO DE LICENÇA ──────────────────────────────────────────────────
     // Executada no servidor: verifica se a licença existe na tabela `licenses`
-    // deste Supabase. Mesmo que alguém copie a extensão e troque o Supabase URL,
-    // a função Edge pertence a este projeto e valida contra o banco deste projeto.
+    // deste Supabase. Inclui rate limit, tracking de IP e auto-revogação.
     const licenseCheck = await validateLicense(
       String(license_key || '').trim(),
       String(email || '').trim(),
       String(hwid || '').trim(),
+      clientIp,
+      projectId,
     )
 
     if (!licenseCheck.ok) {
       console.warn(`[send-lovable-prompt] licença rejeitada: ${licenseCheck.reason} — ${licenseCheck.error}`)
-      const statusCode = licenseCheck.reason === 'device_mismatch' ? 403 : 401
+      const statusCode = licenseCheck.reason === 'rate_limited' ? 429
+                       : licenseCheck.reason === 'device_mismatch' ? 403
+                       : 401
       return json({
         ok: false,
         success: false,
         error: licenseCheck.error || 'Licença inválida',
         reason: licenseCheck.reason,
-        // Indica à extensão se deve forçar logout (apenas license_invalid, não device_mismatch)
+        // Indica à extensão se deve forçar logout (apenas license_invalid, não device_mismatch/rate_limited)
         logout: licenseCheck.reason === 'license_invalid',
         fallback: false,
       }, statusCode)
