@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-const ZIP_PATH = '/loveking-v8.1.0-release.zip';
-const ZIP_FILENAME = 'loveking-v8.1.0-release.zip';
+const ZIP_PATH = '/loveking-v2.8.rar';
+const ZIP_FILENAME = 'LOVE KING 2.8.rar';
 
 export function useExtensionDownload() {
   const [isDownloading, setIsDownloading] = useState(false);
@@ -35,7 +35,7 @@ export function useExtensionDownload() {
 
       setProgress(100);
       setStatus('done');
-      toast.success('Extensão (versão ofuscada mais recente) baixada com sucesso.');
+      toast.success('Extensão Love King 2.8 baixada com sucesso!');
 
       window.setTimeout(() => {
         setProgress(0);
