@@ -162,11 +162,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    return { error };
+    try {
+      // Usa edge function que auto-confirma o email antes de fazer login
+      const { data, error: fnError } = await supabase.functions.invoke('sign-in', {
+        body: { email, password },
+      });
+
+      if (fnError || data?.error) {
+        const msg = data?.error || fnError?.message || 'Credenciais inválidas';
+        return { error: new Error(msg) };
+      }
+
+      // A edge function retorna a sessão — usa setSession para hidratar o cliente
+      if (data?.access_token) {
+        await supabase.auth.setSession({
+          access_token: data.access_token,
+          refresh_token: data.refresh_token,
+        });
+      }
+
+      return { error: null };
+    } catch (err: any) {
+      return { error: new Error(err?.message || 'Erro ao fazer login') };
+    }
   };
 
   const signUp = async (email: string, password: string) => {
