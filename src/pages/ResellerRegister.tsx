@@ -85,42 +85,23 @@ export default function ResellerRegister() {
 
     setIsSubmitting(true);
 
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { emailRedirectTo: `${window.location.origin}/` },
+    // Usa edge function com Admin API para evitar rate limit do Supabase Auth
+    const { data: regData, error: regError } = await supabase.functions.invoke('register-user', {
+      body: { email, password, name, company: company || undefined, phone: phone || undefined },
     });
 
-    if (authError) {
+    if (regError || regData?.error) {
       toast({
         title: 'Erro no cadastro',
-        description: translateAuthError(authError.message),
+        description: translateAuthError(regData?.error || regError?.message || 'Erro ao cadastrar'),
         variant: 'destructive',
       });
       setIsSubmitting(false);
       return;
     }
 
-    if (!authData.user) {
-      toast({ title: 'Erro', description: 'Não foi possível criar a conta.', variant: 'destructive' });
-      setIsSubmitting(false);
-      return;
-    }
-
-    // Cria perfil server-side (atômico, com SERVICE_ROLE) — funciona mesmo se a sessão demorar
-    const { data: regData, error: regError } = await supabase.functions.invoke('register-reseller-self', {
-      body: { name, company: company || undefined, phone: phone || undefined },
-    });
-
-    if (regError || (regData as any)?.error) {
-      toast({
-        title: 'Erro',
-        description: (regData as any)?.error || 'Conta criada mas falha ao salvar perfil. Entre em contato com o suporte.',
-        variant: 'destructive',
-      });
-      setIsSubmitting(false);
-      return;
-    }
+    // Faz login automático após cadastro
+    await supabase.auth.signInWithPassword({ email, password });
 
     toast({
       title: 'Cadastro enviado com sucesso!',

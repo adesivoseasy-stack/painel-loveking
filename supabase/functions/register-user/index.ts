@@ -22,6 +22,8 @@ Deno.serve(async (req) => {
     const email = (body.email || '').toString().trim().toLowerCase();
     const password = (body.password || '').toString();
     const name = (body.name || email.split('@')[0] || 'Revendedor').toString().trim().slice(0, 120);
+    const company = (body.company || '').toString().trim().slice(0, 120) || null;
+    const phone = (body.phone || '').toString().trim().slice(0, 30) || null;
 
     if (!email || !password) {
       return new Response(JSON.stringify({ error: 'Email e senha são obrigatórios' }), {
@@ -39,14 +41,13 @@ Deno.serve(async (req) => {
     const { data: userData, error: createError } = await admin.auth.admin.createUser({
       email,
       password,
-      email_confirm: true, // Confirma email automaticamente
+      email_confirm: true,
       user_metadata: { name },
     });
 
     if (createError) {
       console.error('[register-user] createUser error:', createError);
 
-      // Traduz erros comuns
       const msg = createError.message || '';
       if (msg.includes('already registered') || msg.includes('already been registered')) {
         return new Response(JSON.stringify({ error: 'Este email já está cadastrado. Faça login.' }), {
@@ -69,6 +70,8 @@ Deno.serve(async (req) => {
     const { error: profileError } = await admin.from('reseller_profiles').insert({
       user_id: userId,
       name,
+      company,
+      phone,
       status: 'pending',
     });
 
