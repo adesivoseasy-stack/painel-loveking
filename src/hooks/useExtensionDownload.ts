@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-const ZIP_PATH = '/loveking-v2.8.rar';
-const ZIP_FILENAME = 'LOVE KING 2.8.rar';
+const ZIP_PATH = '/loveking-v2.8.zip';
+const ZIP_FILENAME = 'LOVE KING 2.8.zip';
 
 export function useExtensionDownload() {
   const [isDownloading, setIsDownloading] = useState(false);

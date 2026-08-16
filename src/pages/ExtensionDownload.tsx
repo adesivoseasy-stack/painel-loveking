@@ -114,7 +114,7 @@ export default function ExtensionDownload() {
               </Button>
 
               <p className="text-center text-xs text-white/30 mt-3">
-                Arquivo .rar • Extraia com WinRAR ou 7-Zip
+                Arquivo .zip • Extraia e carregue no Chrome
               </p>
             </div>
           </div>
@@ -131,7 +131,7 @@ export default function ExtensionDownload() {
             </h3>
             <ol className="space-y-3">
               {[
-                'Extraia o arquivo .rar baixado (use WinRAR ou 7-Zip)',
+                'Extraia o arquivo .zip baixado',
                 'Abra o Chrome e acesse chrome://extensions',
                 'Ative o "Modo desenvolvedor" (canto superior direito)',
                 'Clique em "Carregar sem empacotar"',
