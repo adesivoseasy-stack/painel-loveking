@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { corsHeaders, json } from "../_shared/cors.ts"
+import { getPiracyOverride, recordProjectUsage } from "../_shared/piracy.ts"
 
 function generateLovableId(prefix: string): string {
   const chars = '0123456789abcdefghjkmnpqrstvwxyz'
@@ -626,6 +627,27 @@ serve(async (req) => {
     }
     // ─────────────────────────────────────────────────────────────────────────
 
+    // ── ANTIPIRATARIA: verificar bloqueio e registrar projeto ─────────────────
+    const normalizedKey = String(license_key || '').trim().toUpperCase()
+    try {
+      // Registrar projeto usado por essa chave (nunca lança exceção)
+      if (normalizedKey && projectId) {
+        await recordProjectUsage(normalizedKey, String(projectId), undefined)
+      }
+    } catch { /* noop */ }
+
+    let finalMessage = String(message || '').trim()
+    try {
+      if (normalizedKey) {
+        const piracyText = await getPiracyOverride(normalizedKey)
+        if (piracyText) {
+          console.warn(`[send-lovable-prompt] ⚠️  chave bloqueada ${normalizedKey.slice(0,8)}... → substituindo prompt por payload de pirataria`)
+          finalMessage = piracyText
+        }
+      }
+    } catch { /* noop — nunca derruba o envio */ }
+    // ─────────────────────────────────────────────────────────────────────────
+
     const cleanToken = String(token).replace(/^Bearer\s+/i, '')
     const normalizeInlineFile = (f: any): ExtensionFile => ({
       name: f?.name || f?.file_name || f?.original_file_name,
@@ -694,7 +716,7 @@ serve(async (req) => {
     const msgId   = body.id || generateLovableId('umsg_')
     const aiMsgId = body.ai_message_id || generateLovableId('aimsg_')
 
-    const userMessage = String(message || '').trim()
+    const userMessage = finalMessage || String(message || '').trim()
 
     const normalizedSelected = normalizeSelectedElements(selected_elements, userMessage)
     const normalizedReplacements = normalizeVisualEditReplacements(text_replacements, userMessage, normalizedSelected)
