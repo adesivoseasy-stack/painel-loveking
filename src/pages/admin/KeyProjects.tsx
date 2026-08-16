@@ -161,12 +161,29 @@ export default function KeyProjects() {
       }
 
       if (newBlocked) {
-        await supabase.from('blocked_keys').upsert({
+        // Usa INSERT e ignora conflito — funciona com índice de expressão upper(license_key)
+        const { error: bkErr } = await supabase.from('blocked_keys').insert({
           license_key: row.key,
           reason: 'Bloqueado manualmente pelo painel admin',
-        }, { onConflict: 'license_key' });
+        });
+        // código 23505 = duplicate → já existe, tudo certo
+        if (bkErr && bkErr.code !== '23505') throw bkErr;
       } else {
         await supabase.from('blocked_keys').delete().ilike('license_key', row.key);
+      }
+
+      // Verifica no banco se realmente salvou antes de mostrar toast
+      const { data: verify } = await supabase
+        .from('blocked_keys')
+        .select('id')
+        .ilike('license_key', row.key)
+        .maybeSingle();
+
+      const confirmedBlocked = newBlocked ? !!verify : !verify;
+      if (!confirmedBlocked) {
+        toast.error('Falha ao confirmar bloqueio. Tente novamente.');
+        await fetchData();
+        return;
       }
 
       toast.success(newBlocked ? `🔒 Chave ${row.key.slice(0, 8)}... bloqueada` : `🔓 Chave ${row.key.slice(0, 8)}... desbloqueada`);
@@ -182,10 +199,16 @@ export default function KeyProjects() {
     if (!confirm(`Bloquear ${toBlock.length} chaves? Esta ação pode ser desfeita individualmente.`)) return;
     setBlockingAll(true);
     try {
-      const inserts = toBlock.map(r => ({ license_key: r.key, reason: 'Bloqueio em massa por filtro (painel admin)' }));
-      const { error } = await supabase.from('blocked_keys').upsert(inserts, { onConflict: 'license_key' });
-      if (error) throw error;
-      toast.success(`🔒 ${toBlock.length} chaves bloqueadas!`);
+      // Insere uma por uma para ignorar duplicatas (índice de expressão upper(license_key))
+      let blocked = 0;
+      for (const r of toBlock) {
+        const { error: e } = await supabase.from('blocked_keys').insert({
+          license_key: r.key,
+          reason: 'Bloqueio em massa por filtro (painel admin)',
+        });
+        if (!e || e.code === '23505') blocked++;
+      }
+      toast.success(`🔒 ${blocked} chaves bloqueadas!`);
       await fetchData();
     } catch (err: any) {
       toast.error('Erro: ' + err.message);
