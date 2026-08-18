@@ -392,7 +392,7 @@ Deno.serve(async (req) => {
         customer_email: email,
         customer_phone: phoneNumber,
         customer_document: document,
-        product_type: renewal ? 'renewal' : (daily ? 'daily' : (weekly ? 'weekly' : (lovableAccount ? 'lovable_account' : (capcutPro ? 'capcut_pro' : (seedanceAccount ? 'seedance_account' : (geminiPro ? 'gemini_pro' : (manusCredits ? 'manus_credits' : (comboAccount ? 'combo_account' : (comboChampion ? 'combo_champion' : (combo ? 'combo' : ((lifetime || lifetimeBulk) ? 'lifetime' : 'standard')))))))))),
+        product_type: renewal ? 'renewal' : (daily ? 'daily' : (weekly ? 'weekly' : (lovableAccount ? 'lovable_account' : (capcutPro ? 'capcut_pro' : (seedanceAccount ? 'seedance_account' : (geminiPro ? 'gemini_pro' : (manusCredits ? 'manus_credits' : (comboAccount ? 'combo_account' : (comboChampion ? 'combo_champion' : (combo ? 'combo' : ((lifetime || lifetimeBulk) ? 'lifetime' : 'standard'))))))))))))  ,
         target_license_id: renewalLicenseId,
       })
       .select()
