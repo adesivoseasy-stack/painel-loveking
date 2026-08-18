@@ -237,11 +237,11 @@ Deno.serve(async (req) => {
     const generatedKeys: string[] = []
     // combo_champion (Combo Copa do Brasil) inclui 1 chave VITALÍCIA no pacote
     const isLifetime = order.product_type === 'lifetime' || order.product_type === 'combo_champion'
+    const isDaily  = order.product_type === 'daily'
+    const isWeekly = order.product_type === 'weekly'
 
-    // Only key products generate licenses. Account/credit products (combos, gemini_pro,
-    // manus_credits, seedance_account, capcut_pro, etc.) are delivered manually and must NOT
-    // generate free keys.
-    const KEY_PRODUCTS = ['standard', 'lifetime', 'combo_champion']
+    // Only key products generate licenses.
+    const KEY_PRODUCTS = ['standard', 'lifetime', 'combo_champion', 'daily', 'weekly']
     if (!KEY_PRODUCTS.includes(order.product_type)) {
       console.log('[syncpay-webhook] Non-key product paid, no license generated:', order.product_type, order.id)
       return new Response(
@@ -251,6 +251,22 @@ Deno.serve(async (req) => {
     }
 
     const lifetimeHours = 36500 * 24 // ~100 anos
+    const dailyHours    = 24          // 1 dia
+    const weeklyHours   = 7 * 24      // 7 dias
+
+    const durationHours = isLifetime ? lifetimeHours
+                        : isDaily    ? dailyHours
+                        : isWeekly   ? weeklyHours
+                        : 720        // padrão: 30 dias
+
+    const expiresAt = new Date()
+    expiresAt.setHours(expiresAt.getHours() + durationHours)
+
+    const noteLabel = isLifetime ? 'VITALÍCIA'
+                    : isDaily    ? 'DIÁRIA (24h)'
+                    : isWeekly   ? 'SEMANAL (7 dias)'
+                    : 'MENSAL (30 dias)'
+
     for (let i = 0; i < order.quantity; i++) {
       const { data: keyData, error: keyError } = await adminClient.rpc('generate_license_key')
       if (keyError) {
@@ -258,23 +274,18 @@ Deno.serve(async (req) => {
         continue
       }
 
-      const farFuture = new Date()
-      farFuture.setFullYear(farFuture.getFullYear() + 100)
-
       const { data: license, error: insertError } = await adminClient
         .from('licenses')
         .insert({
           license_key: keyData,
           email: 'estoque',
-          expires_at: farFuture.toISOString(),
+          expires_at: expiresAt.toISOString(),
           price: 0,
-          notes: isLifetime
-            ? `Chave VITALÍCIA em estoque - Pedido PIX #${order.id.slice(0, 8)}`
-            : `Chave em estoque - Pedido PIX #${order.id.slice(0, 8)}`,
+          notes: `Chave ${noteLabel} em estoque - Pedido PIX #${order.id.slice(0, 8)}`,
           created_by: order.reseller_id,
           status: 'active',
           is_wildcard: false,
-          duration_hours: isLifetime ? lifetimeHours : 720,
+          duration_hours: durationHours,
           first_activated_at: null,
         })
         .select('id')

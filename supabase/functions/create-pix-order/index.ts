@@ -28,6 +28,8 @@ const BodySchema = z.object({
   lovableAccount: z.boolean().optional(),
   renewal: z.boolean().optional(),
   licenseId: z.string().uuid().optional(),
+  daily: z.boolean().optional(),   // Plano Diário: R$ 4,90 / 24h
+  weekly: z.boolean().optional(),  // Plano Semanal: R$ 12,90 / 7 dias
 })
 
 async function readResponseData(res: Response) {
@@ -148,7 +150,7 @@ Deno.serve(async (req) => {
       })
     }
 
-    let { quantity, customerName, customerEmail, customerPhone, customerDocument, promo, lifetime, lifetimeBulk, combo, comboChampion, comboAccount, manusCredits, geminiPro, seedanceAccount, capcutPro, lovableAccount, renewal, licenseId } = bodyResult.data
+    let { quantity, customerName, customerEmail, customerPhone, customerDocument, promo, lifetime, lifetimeBulk, combo, comboChampion, comboAccount, manusCredits, geminiPro, seedanceAccount, capcutPro, lovableAccount, renewal, licenseId, daily, weekly } = bodyResult.data
     const userId = authUser.id
 
     const adminClient = createClient(
@@ -174,7 +176,19 @@ Deno.serve(async (req) => {
     let pricePerKey: number
     let renewalLicenseId: string | null = null
 
-    if (renewal) {
+    if (daily) {
+      // Plano Diário: 1 chave válida por 24 horas — R$ 4,90
+      quantity = 1
+      totalReais = 4.90
+      pricePerKey = 4.90
+      promo = false
+    } else if (weekly) {
+      // Plano Semanal: 1 chave válida por 7 dias — R$ 12,90
+      quantity = 1
+      totalReais = 12.90
+      pricePerKey = 12.90
+      promo = false
+    } else if (renewal) {
       // Renovação manual via PIX: R$ 34,90 para +30 dias na chave indicada.
       if (!licenseId) {
         return new Response(JSON.stringify({ error: 'licenseId obrigatório para renovação' }), { status: 400, headers: corsHeaders })
@@ -378,7 +392,7 @@ Deno.serve(async (req) => {
         customer_email: email,
         customer_phone: phoneNumber,
         customer_document: document,
-        product_type: renewal ? 'renewal' : (lovableAccount ? 'lovable_account' : (capcutPro ? 'capcut_pro' : (seedanceAccount ? 'seedance_account' : (geminiPro ? 'gemini_pro' : (manusCredits ? 'manus_credits' : (comboAccount ? 'combo_account' : (comboChampion ? 'combo_champion' : (combo ? 'combo' : ((lifetime || lifetimeBulk) ? 'lifetime' : 'standard'))))))))),
+        product_type: renewal ? 'renewal' : (daily ? 'daily' : (weekly ? 'weekly' : (lovableAccount ? 'lovable_account' : (capcutPro ? 'capcut_pro' : (seedanceAccount ? 'seedance_account' : (geminiPro ? 'gemini_pro' : (manusCredits ? 'manus_credits' : (comboAccount ? 'combo_account' : (comboChampion ? 'combo_champion' : (combo ? 'combo' : ((lifetime || lifetimeBulk) ? 'lifetime' : 'standard')))))))))),
         target_license_id: renewalLicenseId,
       })
       .select()

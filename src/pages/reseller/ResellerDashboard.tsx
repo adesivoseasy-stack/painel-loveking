@@ -116,7 +116,7 @@ export default function ResellerDashboard() {
   const [isPixModalOpen, setIsPixModalOpen] = useState(false);
   const pixStatus = usePixOrderPolling(pixOrder?.order_id || null);
   const [pixCustomerOpen, setPixCustomerOpen] = useState(false);
-  const [pendingPixAction, setPendingPixAction] = useState<{ qty: number; promo?: boolean; lifetime?: boolean; lifetimeBulk?: boolean; combo?: boolean; comboChampion?: boolean; comboAccount?: boolean; manusCredits?: boolean; geminiPro?: boolean; seedanceAccount?: boolean; capcutPro?: boolean; lovableAccount?: boolean } | null>(null);
+  const [pendingPixAction, setPendingPixAction] = useState<{ qty: number; promo?: boolean; lifetime?: boolean; lifetimeBulk?: boolean; combo?: boolean; comboChampion?: boolean; comboAccount?: boolean; manusCredits?: boolean; geminiPro?: boolean; seedanceAccount?: boolean; capcutPro?: boolean; lovableAccount?: boolean; daily?: boolean; weekly?: boolean } | null>(null);
   const [comboRequirementsOpen, setComboRequirementsOpen] = useState(false);
   const [comboAccepted, setComboAccepted] = useState(false);
   const [lastOrderWasCombo, setLastOrderWasCombo] = useState(false);
@@ -284,10 +284,10 @@ export default function ResellerDashboard() {
 
   const handlePixCustomerConfirm = async (customerData: PixCustomerFormData) => {
     if (!pendingPixAction) return;
-    const { qty, promo, lifetime, lifetimeBulk, combo, comboChampion, comboAccount, manusCredits, geminiPro, seedanceAccount, capcutPro, lovableAccount } = pendingPixAction;
+    const { qty, promo, lifetime, lifetimeBulk, combo, comboChampion, comboAccount, manusCredits, geminiPro, seedanceAccount, capcutPro, lovableAccount, daily, weekly } = pendingPixAction;
     setPixCustomerOpen(false);
-    setLoadingQty(lovableAccount ? -11 : capcutPro ? -10 : seedanceAccount ? -9 : geminiPro ? -8 : lifetimeBulk ? -7 : manusCredits ? -6 : comboAccount ? -5 : comboChampion ? -4 : combo ? -3 : lifetime ? -2 : promo ? -1 : qty);
-    const order = await createOrder(qty, customerData, promo, lifetime, combo, comboChampion, undefined, comboAccount, manusCredits, lifetimeBulk, geminiPro, seedanceAccount, capcutPro, lovableAccount);
+    setLoadingQty(daily ? -12 : weekly ? -13 : lovableAccount ? -11 : capcutPro ? -10 : seedanceAccount ? -9 : geminiPro ? -8 : lifetimeBulk ? -7 : manusCredits ? -6 : comboAccount ? -5 : comboChampion ? -4 : combo ? -3 : lifetime ? -2 : promo ? -1 : qty);
+    const order = await createOrder(qty, customerData, promo, lifetime, combo, comboChampion, undefined, comboAccount, manusCredits, lifetimeBulk, geminiPro, seedanceAccount, capcutPro, lovableAccount, daily, weekly);
     setLoadingQty(null);
     if (order) {
       setPixOrder(order);
@@ -424,6 +424,16 @@ export default function ResellerDashboard() {
 
   const handleBuyLifetimeBulk = () => {
     setPendingPixAction({ qty: 10, lifetimeBulk: true });
+    setPixCustomerOpen(true);
+  };
+
+  const handleBuyDaily = () => {
+    setPendingPixAction({ qty: 1, daily: true });
+    setPixCustomerOpen(true);
+  };
+
+  const handleBuyWeekly = () => {
+    setPendingPixAction({ qty: 1, weekly: true });
     setPixCustomerOpen(true);
   };
 
@@ -674,6 +684,76 @@ export default function ResellerDashboard() {
                       >
                         {loadingQty === -2 ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Zap className="mr-2 h-4 w-4" />}
                         {loadingQty === -2 ? 'Gerando PIX...' : 'Adquirir Agora'}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Plano Diário 24h */}
+                <div className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0a0a0a]">
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-sky-400/80 via-sky-500 to-sky-400/40" />
+                  <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-gradient-to-l from-sky-500/[0.04] to-transparent pointer-events-none" />
+                  <div className="pl-6 pr-5 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                      <div className="h-12 w-12 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m8.66-9h-1M4.34 12h-1m15.07-6.07-.71.71M5.64 18.36l-.71.71m12.02 0-.71-.71M5.64 5.64l-.71-.71M12 7a5 5 0 100 10A5 5 0 0012 7z" /></svg>
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <span className="bg-sky-500/20 text-sky-400 border border-sky-500/30 text-[9px] font-black uppercase tracking-[0.15em] px-2 py-0.5 rounded-md">⏱ 24 horas</span>
+                          <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.15em]">Plano Diário</span>
+                        </div>
+                        <h3 className="text-lg sm:text-xl font-black text-white">Chave <span className="text-sky-400">Diária</span></h3>
+                        <p className="text-xs text-white/40 mt-0.5 max-w-sm">1 chave com validade de 24 horas — ideal para testar ou vender acesso pontual.</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-stretch sm:items-end gap-3 w-full sm:w-auto shrink-0">
+                      <div className="sm:text-right">
+                        <p className="text-2xl font-black text-sky-400">R$ 4,90</p>
+                        <p className="text-[10px] text-sky-400/70 font-bold">validade 24h</p>
+                      </div>
+                      <Button
+                        disabled={loadingQty !== null}
+                        onClick={handleBuyDaily}
+                        className="bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl h-10 px-6 shadow-lg shadow-sky-500/20 transition-all hover:scale-[1.02] active:scale-95"
+                      >
+                        {loadingQty === -12 ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Zap className="mr-2 h-4 w-4" />}
+                        {loadingQty === -12 ? 'Gerando PIX...' : 'Adquirir Agora'}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Plano Semanal 7 dias */}
+                <div className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0a0a0a]">
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-violet-400/80 via-violet-500 to-violet-400/40" />
+                  <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-gradient-to-l from-violet-500/[0.04] to-transparent pointer-events-none" />
+                  <div className="pl-6 pr-5 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                      <div className="h-12 w-12 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <span className="bg-violet-500/20 text-violet-400 border border-violet-500/30 text-[9px] font-black uppercase tracking-[0.15em] px-2 py-0.5 rounded-md">📅 7 dias</span>
+                          <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.15em]">Plano Semanal</span>
+                        </div>
+                        <h3 className="text-lg sm:text-xl font-black text-white">Chave <span className="text-violet-400">Semanal</span></h3>
+                        <p className="text-xs text-white/40 mt-0.5 max-w-sm">1 chave com validade de 7 dias — acesso rápido e acessível para seus clientes.</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-stretch sm:items-end gap-3 w-full sm:w-auto shrink-0">
+                      <div className="sm:text-right">
+                        <p className="text-2xl font-black text-violet-400">R$ 12,90</p>
+                        <p className="text-[10px] text-violet-400/70 font-bold">validade 7 dias</p>
+                      </div>
+                      <Button
+                        disabled={loadingQty !== null}
+                        onClick={handleBuyWeekly}
+                        className="bg-violet-600 hover:bg-violet-500 text-white font-bold rounded-xl h-10 px-6 shadow-lg shadow-violet-500/20 transition-all hover:scale-[1.02] active:scale-95"
+                      >
+                        {loadingQty === -13 ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Zap className="mr-2 h-4 w-4" />}
+                        {loadingQty === -13 ? 'Gerando PIX...' : 'Adquirir Agora'}
                       </Button>
                     </div>
                   </div>
