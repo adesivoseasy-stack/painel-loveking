@@ -259,11 +259,23 @@ Deno.serve(async (req) => {
       promo = false
     } else if (lifetime) {
       // Chave Vitalícia: 1 chave com validade ilimitada (100 anos)
-      // Promoção ativa: R$ 29,90
+      // Verifica se o revendedor tem preço customizado
       quantity = 1
-      totalReais = 29.90
-      pricePerKey = 29.90
       promo = false
+      const customLifetimeKey = `reseller_custom_lifetime_price_${userId}`
+      const { data: customCfg } = await adminClient
+        .from('system_config')
+        .select('value')
+        .eq('key', customLifetimeKey)
+        .maybeSingle()
+      if (customCfg?.value && parseFloat(customCfg.value) > 0) {
+        pricePerKey = parseFloat(customCfg.value)
+        totalReais = pricePerKey
+      } else {
+        // Preço padrão: R$ 29,90
+        totalReais = 29.90
+        pricePerKey = 29.90
+      }
     } else if (promo) {
       // Promoção de Inauguração: pacote fixo 10 chaves por R$249,90 (24h)
       const PROMO_START = new Date('2026-05-19T16:20:00-03:00').getTime()
