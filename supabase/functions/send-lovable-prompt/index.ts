@@ -770,12 +770,19 @@ serve(async (req) => {
 
     const normalizedSelected = normalizeSelectedElements(selected_elements, userMessage)
 
-    // Âncora identidade: old_text === new_text (não substitui nada na página)
-    const anchor = userMessage.slice(0, 200) || 'x'
-    const anchorReplacement = [{ old_text: anchor, new_text: anchor, selected_element_index: 0 }]
-
     // chat_only: true para conversa / análise / ambíguo
     const chatOnly = mode !== 'execucao'
+
+    // text_replacements:
+    //   - conversa/analise/ambiguo → [] vazio (nada para substituir, evita abrir plano)
+    //   - execucao → âncora identidade old_text===new_text (não altera nada, só sinaliza intenção)
+    const anchor = userMessage.slice(0, 200) || 'x'
+    const textReplacements = chatOnly
+      ? []
+      : [{ old_text: anchor, new_text: anchor, selected_element_index: 0 }]
+
+    // selected_elements: vazio para não-execução (evita seleção involuntária)
+    const selectedElementsForPayload = chatOnly ? [] : normalizedSelected
 
     // message: vazia quando arquivo subiu; documento como fallback
     const messageField = promptUploaded ? '' : document
@@ -787,12 +794,12 @@ serve(async (req) => {
       id: msgId,
       message: messageField,
       files: filesWithPrompt,
-      selected_elements: normalizedSelected,
+      selected_elements: selectedElementsForPayload,
       chat_only: chatOnly,
       optimisticImageUrls,
       intent: 'visual_edit',
       message_intent_metadata: {
-        visual_edit_metadata: { text_replacements: anchorReplacement },
+        visual_edit_metadata: { text_replacements: textReplacements },
       },
       user_timezone: body.user_timezone || 'America/Sao_Paulo',
       thread_id: session_id,
