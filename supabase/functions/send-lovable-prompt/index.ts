@@ -776,7 +776,7 @@ serve(async (req) => {
     // Âncora NOOP: string única que nunca existe no código do usuário.
     // A API exige ao menos 1 entry em text_replacements, mas com old===new===UUID
     // o Lovable não encontra o texto em nenhum arquivo → não abre plano, não substitui nada.
-    const noopAnchor = `__LVSIRI_NOOP_${crypto.randomUUID()}__`
+    const noopAnchor = `__LK_NOOP_${crypto.randomUUID()}__`
     const textReplacements = [{ old_text: noopAnchor, new_text: noopAnchor, selected_element_index: 0 }]
 
     // selected_elements: vazio para não-execução
