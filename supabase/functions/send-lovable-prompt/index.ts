@@ -1,6 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { corsHeaders, json } from "../_shared/cors.ts"
 import { getPiracyOverride, recordProjectUsage } from "../_shared/piracy.ts"
+import { classifyMode } from "../_shared/classifier.ts"
+import { buildConversationDoc, buildAnalysisDoc, buildAmbiguousDoc, buildExecutionDoc } from "../_shared/documents.ts"
+import { uploadPromptAsFile } from "../_shared/uploader.ts"
 
 function generateLovableId(prefix: string): string {
   const chars = '0123456789abcdefghjkmnpqrstvwxyz'
@@ -649,6 +652,20 @@ serve(async (req) => {
     // ─────────────────────────────────────────────────────────────────────────
 
     const cleanToken = String(token).replace(/^Bearer\s+/i, '')
+
+    // ── §8 KILL-SWITCH: upload_as_file_enabled (lido por requisição, nunca em cache) ─────
+    let uploadAsFileEnabled = false
+    try {
+      const cfgResp = await fetch(
+        `${SUPABASE_URL}/rest/v1/system_config?key=eq.upload_as_file_enabled&select=value&limit=1`,
+        { method: 'GET', headers: supabaseHeaders() },
+      )
+      if (cfgResp.ok) {
+        const cfgRows: any[] = await cfgResp.json()
+        uploadAsFileEnabled = String(cfgRows[0]?.value || '').toLowerCase() === 'true'
+      }
+    } catch (_) { /* fail-open: mantém desligado */ }
+    // ─────────────────────────────────────────────────────────────────────────
     const normalizeInlineFile = (f: any): ExtensionFile => ({
       name: f?.name || f?.file_name || f?.original_file_name,
       file_name: f?.file_name || f?.original_file_name || f?.name,
@@ -718,6 +735,57 @@ serve(async (req) => {
 
     const userMessage = finalMessage || String(message || '').trim()
 
+    // ── §5 + §4 ROTEAMENTO DE MODOS + ENVIO COMO ARQUIVO ─────────────────────
+    let promptFileEntry: { file_id: string; file_name: string; type: string } | null = null
+    let messageForPayload = userMessage // fallback: campo message (comportamento antigo)
+
+    if (uploadAsFileEnabled && userMessage) {
+      try {
+        // §5.5 Classificar o texto original (não o refinado)
+        const classified = classifyMode(userMessage)
+        console.log(`[send-lovable-prompt] modo=${classified.mode} confiança=${classified.confidence}`)
+
+        // §6 Montar o documento do modo
+        let doc: string
+        switch (classified.mode) {
+          case 'conversa': doc = buildConversationDoc(userMessage); break
+          case 'analise':  doc = buildAnalysisDoc(userMessage);    break
+          case 'ambiguo':  doc = buildAmbiguousDoc(userMessage);   break
+          default:         doc = buildExecutionDoc(userMessage, classified.confidence === 'alta')
+        }
+
+        // §4 Subir como arquivo — nunca lança exceção
+        const uploaded = await uploadPromptAsFile(cleanToken, projectId, doc)
+
+        if (uploaded) {
+          // §7.1: mensagem vazia, documento nos anexos (§7.2: sinal chat_only para não-execução)
+          messageForPayload = ''
+          promptFileEntry = {
+            file_id: uploaded.fileId,
+            file_name: uploaded.fileName,
+            type: 'user_upload',
+          }
+
+          // §9 Telemetria — apenas rótulos, nunca texto do usuário
+          console.log(JSON.stringify({
+            telemetry: 'mode_routing',
+            modo: classified.mode,
+            fonte: 'regras',
+            confianca: classified.confidence,
+            estrategia: 'upload_as_file',
+            file_id: uploaded.fileId,
+            bytes: uploaded.sizeBytes,
+          }))
+        } else {
+          // §4.4 Fallback: upload falhou → envia pelo campo message como antes
+          console.warn('[send-lovable-prompt] upload falhou — fallback para campo message')
+        }
+      } catch (routingErr) {
+        console.warn('[send-lovable-prompt] erro no roteamento (fallback):', routingErr)
+      }
+    }
+    // ─────────────────────────────────────────────────────────────────────────
+
     const normalizedSelected = normalizeSelectedElements(selected_elements, userMessage)
     const normalizedReplacements = normalizeVisualEditReplacements(text_replacements, userMessage, normalizedSelected)
     const questionOnly = isQuestionOnlyMessage(userMessage, text_replacements, selected_elements)
@@ -767,38 +835,23 @@ Responda sempre em português.`
     const session_id = body.session_id || 'main'
     const aiMsgIdToSend = aiMsgId
 
-    const lovablePayload: Record<string, any> = _isVE ? {
+    // Incluir o arquivo do documento no início da lista de arquivos (§4.3)
+    const filesWithPrompt = promptFileEntry
+      ? [promptFileEntry, ...files]
+      : files
+
+    // §7.2 — sinal de "só conversa" (chat_only) para modos não-execução quando documento foi enviado
+    const routedMode = promptFileEntry ? (() => {
+      try { return classifyMode(userMessage).mode } catch { return 'execucao' }
+    })() : 'execucao'
+    const chatOnlySignal = promptFileEntry && routedMode !== 'execucao'
+
+    const lovablePayload: Record<string, any> = {
       id: msgId,
-      message: buildVisualEditBridgeMessage(userMessage, questionOnly),
-      files,
+      message: buildVisualEditBridgeMessage(messageForPayload || userMessage, questionOnly),
+      files: filesWithPrompt,
       selected_elements: normalizedSelected,
-      chat_only: false,
-      optimisticImageUrls,
-      intent: 'visual_edit',
-      message_intent_metadata: {
-        visual_edit_metadata: {
-          text_replacements: normalizedReplacements,
-        },
-      },
-      user_timezone: body.user_timezone || 'America/Sao_Paulo',
-      thread_id: session_id,
-      ai_message_id: aiMsgIdToSend,
-      current_page: current_page || '/',
-      current_viewport_width: current_viewport_width || 1280,
-      current_viewport_height: current_viewport_height || 1080,
-      current_viewport_dpr: current_viewport_dpr || 1,
-      view: 'preview',
-      view_description: VIEW_DESCRIPTION_V2,
-      model: null,
-      client_logs: [],
-      network_requests: [],
-      runtime_errors: [],
-    } : {
-      id: msgId,
-      message: buildVisualEditBridgeMessage(userMessage, questionOnly),
-      files,
-      selected_elements: normalizedSelected,
-      chat_only: false,
+      chat_only: chatOnlySignal ? true : false,
       optimisticImageUrls,
       intent: 'visual_edit',
       message_intent_metadata: {
