@@ -1,51 +1,25 @@
 /**
- * uploader.ts — Sobe o documento do turno como arquivo no Lovable (§4 do MD)
+ * uploader.ts — Upload de PROMPT.txt (3 passos obrigatórios)
  *
- * Usa o mesmo endpoint de upload de ZIP que já existe na edge function.
- * REGRA FUNDAMENTAL (§4.4): falha nunca derruba o pedido — retorna null e
- * o chamador volta para o caminho antigo (campo message).
+ * CRÍTICO: sem o passo 3 (generate-download-url) o arquivo sobe mas não aparece no chat.
  */
 
-export interface PromptFile {
+export interface UploadedPromptFile {
   fileId: string
   fileName: string
   downloadUrl: string
+  contentType: string
   sizeBytes: number
 }
 
-function extractUploadUrl(data: any): string {
-  // Extrator tolerante (§4.1): tenta as chaves conhecidas, depois qualquer string URL
-  if (typeof data === 'string' && data.startsWith('http')) return data
-  if (data?.url && typeof data.url === 'string') return data.url
-  if (data?.signedUrl && typeof data.signedUrl === 'string') return data.signedUrl
-  if (data?.uploadUrl && typeof data.uploadUrl === 'string') return data.uploadUrl
-  if (data?.upload_url && typeof data.upload_url === 'string') return data.upload_url
-  // último recurso: qualquer valor string que pareça URL
-  for (const v of Object.values(data || {})) {
-    if (typeof v === 'string' && v.startsWith('http')) return v
-  }
-  return ''
-}
-
-/**
- * Sobe o conteúdo como arquivo de texto no Lovable e retorna referência.
- * Nunca lança exceção — retorna null em qualquer erro.
- */
-export async function uploadPromptAsFile(
+export async function uploadPromptFile(
   token: string,
   projectId: string,
-  content: string,
-): Promise<PromptFile | null> {
+  document: string,
+): Promise<UploadedPromptFile | null> {
   try {
-    const encoder = new TextEncoder()
-    const bytes = encoder.encode(content)
-    const sizeBytes = bytes.byteLength
-
-    // §4.1 — cuidado com a extensão: sem sufixo, igual ao que o cliente oficial usa
-    // O Lovable parece rotular pelo nome original; "PROMPT" sem extensão é o que o MD recomenda
-    const fileName = 'PROMPT'
+    const bytes = new TextEncoder().encode(document)
     const contentType = 'text/plain; charset=utf-8'
-
     const headers = {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
@@ -53,7 +27,7 @@ export async function uploadPromptAsFile(
       'referer': 'https://lovable.dev/',
     }
 
-    // ── Etapa 1: pedir URL de upload (§4.1) ───────────────────────────────────
+    // PASSO 1: gerar URL de upload
     const uploadUrlResp = await fetch(
       `https://api.lovable.dev/projects/${encodeURIComponent(projectId)}/files/generate-upload-url`,
       {
@@ -61,68 +35,67 @@ export async function uploadPromptAsFile(
         headers,
         body: JSON.stringify({
           content_type: contentType,
-          original_file_name: fileName,
-          file_size_bytes: sizeBytes,
-          original_file_size_bytes: sizeBytes,
-          file_name: crypto.randomUUID(), // id local aleatório (§4.1)
+          original_file_name: 'PROMPT.txt',
+          file_size_bytes: bytes.byteLength,
+          original_file_size_bytes: bytes.byteLength,
         }),
-        signal: AbortSignal.timeout(10_000), // timeout curto §4.1
+        signal: AbortSignal.timeout(10_000),
       },
     )
-
     if (!uploadUrlResp.ok) {
-      console.warn('[prompt-uploader] generate-upload-url failed:', uploadUrlResp.status, await uploadUrlResp.text().catch(() => ''))
+      console.warn('[v1-doc] generate-upload-url failed:', uploadUrlResp.status)
       return null
     }
 
-    const uploadData = await uploadUrlResp.json().catch(() => null)
-    if (!uploadData) return null
-
-    const putUrl = extractUploadUrl(uploadData)
-    if (!putUrl) {
-      console.warn('[prompt-uploader] nenhuma URL de upload na resposta:', JSON.stringify(uploadData).slice(0, 200))
+    const uploadData = await uploadUrlResp.json()
+    const fileId = uploadData.file_id || uploadData.file_name || uploadData.path || uploadData.key
+    if (!fileId || !uploadData.url) {
+      console.warn('[v1-doc] resposta do upload sem fileId ou url:', JSON.stringify(uploadData).slice(0, 200))
       return null
     }
-
-    const fileId = uploadData.file_id || uploadData.file_name || uploadData.path || uploadData.key || crypto.randomUUID()
+    // Headers extras da resposta do passo 1 DEVEM ir no PUT (ex: x-goog-content-length-range)
     const extraHeaders: Record<string, string> = uploadData.headers || {}
 
-    // ── Etapa 2: subir os bytes (§4.2) ────────────────────────────────────────
-    const putResp = await fetch(putUrl, {
+    // PASSO 2: PUT com os bytes + extraHeaders obrigatórios
+    const putResp = await fetch(uploadData.url, {
       method: 'PUT',
       headers: { 'Content-Type': contentType, ...extraHeaders },
       body: bytes,
-      signal: AbortSignal.timeout(20_000), // timeout maior §4.2
+      signal: AbortSignal.timeout(20_000),
     })
-
     if (!putResp.ok) {
-      console.warn('[prompt-uploader] PUT failed:', putResp.status, await putResp.text().catch(() => ''))
+      console.warn('[v1-doc] PUT failed:', putResp.status)
       return null
     }
 
-    // Tentar obter download URL (opcional — falha é silenciosa)
+    // PASSO 3: generate-download-url — SEM ISSO o arquivo não aparece no chat!
+    // dir_name = primeira parte do fileId (ex: "abc123" de "abc123/PROMPT.txt")
     let downloadUrl = ''
+    const dirName = String(fileId || '').split('/')[0]
     try {
-      const dirName = String(fileId || '').split('/')[0]
       const dlResp = await fetch('https://api.lovable.dev/files/generate-download-url', {
         method: 'POST',
         headers,
         body: JSON.stringify({ dir_name: dirName, file_name: fileId }),
-        signal: AbortSignal.timeout(8_000),
+        signal: AbortSignal.timeout(10_000),
       })
       if (dlResp.ok) {
         const dlData = await dlResp.json()
         downloadUrl = dlData.url || ''
+      } else {
+        console.warn('[v1-doc] generate-download-url failed:', dlResp.status)
+        // sem download URL o arquivo não aparece → falha
+        return null
       }
-    } catch (_) {
-      // silencioso
+    } catch (e) {
+      console.warn('[v1-doc] generate-download-url exception:', e)
+      return null
     }
 
-    console.log(`[prompt-uploader] ✅ documento enviado como arquivo: ${fileId} (${sizeBytes} bytes)`)
-    return { fileId: String(fileId), fileName, downloadUrl, sizeBytes }
-
-  } catch (err) {
-    console.warn('[prompt-uploader] exceção (fallback para campo message):', err)
-    return null // §4.4 — falha nunca derruba o pedido
+    console.log(`[v1-doc] ✅ PROMPT.txt upado: ${fileId} (${bytes.byteLength} bytes)`)
+    return { fileId: String(fileId), fileName: 'PROMPT.txt', downloadUrl, contentType, sizeBytes: bytes.byteLength }
+  } catch (e) {
+    console.error('[v1-doc] exception:', e)
+    return null
   }
 }
