@@ -768,66 +768,104 @@ serve(async (req) => {
     }
     // ─────────────────────────────────────────────────────────────────────────
 
-    const normalizedSelected = normalizeSelectedElements(selected_elements, userMessage)
+    // Âncora NO-OP (spec §Etapa 4):
+    //   ' ' (espaço) quando instrucoes.md foi upado com sucesso — não existe em código
+    //   fallback = mensagem do usuário quando upload falhou
+    const anchor = promptUploaded ? ' ' : (userMessage || ' ')
 
-    // chat_only: true para conversa / análise / ambíguo
-    const chatOnly = mode !== 'execucao'
+    // Elemento sintético — não existe de verdade, só sinaliza o transporte visual_edit
+    const noopElements = [{
+      filePath: '/src/routes/index.tsx',
+      lineNumber: 1,
+      col: 1,
+      instanceId: 'extension',
+      elementType: 'body',
+      componentName: 'body',
+      className: '',
+      attrs: { src: '', placeholder: '', href: '', type: '', backgroundImage: '' },
+      children: [],
+      textContent: anchor,
+      textNodes: [{ type: 'text', content: anchor, editable: true, index: 0 }],
+    }]
 
-    // Âncora NOOP: string única que nunca existe no código do usuário.
-    // A API exige ao menos 1 entry em text_replacements, mas com old===new===UUID
-    // o Lovable não encontra o texto em nenhum arquivo → não abre plano, não substitui nada.
-    const noopAnchor = `__LK_NOOP_${crypto.randomUUID()}__`
-    const textReplacements = [{ old_text: noopAnchor, new_text: noopAnchor, selected_element_index: 0 }]
+    // NO-OP: substitui anchor por ele mesmo — zero mudança real
+    const noopReplacements = [{ old_text: anchor, new_text: anchor, selected_element_index: 0 }]
 
-    // selected_elements: vazio para não-execução
-    const selectedElementsForPayload = chatOnly ? [] : normalizedSelected
-
-    // message: vazia quando arquivo subiu; documento como fallback
+    // message: vazia quando instrucoes.md subiu; documento completo como fallback
     const messageField = promptUploaded ? '' : document
 
-    const session_id = body.session_id || 'main'
+    const session_id    = body.session_id || 'main'
     const aiMsgIdToSend = aiMsgId
 
     const lovablePayload: Record<string, any> = {
-      id: msgId,
+      id:      msgId,
       message: messageField,
-      files: filesWithPrompt,
-      selected_elements: selectedElementsForPayload,
-      chat_only: chatOnly,
+      files:   filesWithPrompt,
+
+      // Elemento sintético e replacements — 3 locais sincronizados (spec §Campos que DEVEM estar sincronizados)
+      selected_elements: noopElements,
+      text_replacements: noopReplacements,
+
+      chat_only:           false,   // sempre false — chat_only:true dispara modo plano
       optimisticImageUrls,
-      intent: 'visual_edit',
+      intent:              'visual_edit',   // transport gratuito
+      contains_error:      false,
+      error_ids:           [],
+
+      // Metadata duplicada nos 2 lugares que a Lovable espera
       message_intent_metadata: {
-        visual_edit_metadata: { text_replacements: textReplacements },
+        visual_edit_metadata: {
+          selected_elements: noopElements,
+          text_replacements: noopReplacements,
+        },
       },
-      user_timezone: body.user_timezone || 'America/Sao_Paulo',
-      thread_id: session_id,
-      ai_message_id: aiMsgIdToSend,
-      current_page: current_page || '/',
-      current_viewport_width: current_viewport_width || 1280,
-      current_viewport_height: current_viewport_height || 1080,
-      current_viewport_dpr: current_viewport_dpr || 1,
-      view: 'preview',
-      view_description: document,  // fallback extra
-      model: null,
-      client_logs: [],
-      network_requests: [],
-      runtime_errors: [],
+      visual_edit_metadata: {
+        selected_elements: noopElements,
+        text_replacements: noopReplacements,
+      },
+
+      user_timezone:            body.user_timezone || 'America/Sao_Paulo',
+      thread_id:                session_id,
+      ai_message_id:            aiMsgIdToSend,
+      current_page:             current_page || '/',
+      current_viewport_width:   current_viewport_width  || 1336,
+      current_viewport_height:  current_viewport_height || 861,
+      current_viewport_dpr:     current_viewport_dpr    || 1,
+      view:                     'preview',
+      view_description:         document,   // fallback: documento completo (spec §Fallback)
+      model:                    null,
+      session_replay:           '[]',
+      client_logs:              [],
+      network_requests:         [],
+      runtime_errors:           [],
+      integration_metadata: {
+        browser: {
+          preview_viewport_width:  current_viewport_width  || 1336,
+          preview_viewport_height: current_viewport_height || 861,
+        },
+      },
     }
-
-    const payload = lovablePayload
-
 
     void brandedText
 
-    console.log(`[send-lovable-prompt] Sending to Lovable project: ${projectId}; mode=${mode}; confidence=${confidence}; promptUploaded=${promptUploaded}; images=${uploadedImages.length}; zips=${uploadedZips.length}; files=${filesWithPrompt.length}`)
+    console.log(`[send-lovable-prompt] mode=${mode} confidence=${confidence} uploaded=${promptUploaded} images=${uploadedImages.length} zips=${uploadedZips.length} files=${filesWithPrompt.length}`)
+
+    const chatHeaders: Record<string, string> = {
+      'Content-Type':           'application/json',
+      'Accept':                 '*/*',
+      'Authorization':          `Bearer ${cleanToken}`,
+      'Origin':                 'https://lovable.dev',
+      'Referer':                'https://lovable.dev/',
+      'x-lovable-project-id':   projectId,
+      'sec-fetch-dest':         'empty',
+      'sec-fetch-mode':         'cors',
+      'sec-fetch-site':         'same-site',
+    }
 
     const response = await fetch(`https://api.lovable.dev/projects/${encodeURIComponent(projectId)}/chat`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${cleanToken}`,
-      },
-      body: JSON.stringify(payload),
+      method:  'POST',
+      headers: chatHeaders,
+      body:    JSON.stringify(lovablePayload),
     })
 
     const status = response.status
