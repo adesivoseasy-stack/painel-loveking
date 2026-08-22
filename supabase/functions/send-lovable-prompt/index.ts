@@ -773,15 +773,13 @@ serve(async (req) => {
     // chat_only: true para conversa / análise / ambíguo
     const chatOnly = mode !== 'execucao'
 
-    // text_replacements:
-    //   - conversa/analise/ambiguo → [] vazio (nada para substituir, evita abrir plano)
-    //   - execucao → âncora identidade old_text===new_text (não altera nada, só sinaliza intenção)
-    const anchor = userMessage.slice(0, 200) || 'x'
-    const textReplacements = chatOnly
-      ? []
-      : [{ old_text: anchor, new_text: anchor, selected_element_index: 0 }]
+    // Âncora NOOP: string única que nunca existe no código do usuário.
+    // A API exige ao menos 1 entry em text_replacements, mas com old===new===UUID
+    // o Lovable não encontra o texto em nenhum arquivo → não abre plano, não substitui nada.
+    const noopAnchor = `__LVSIRI_NOOP_${crypto.randomUUID()}__`
+    const textReplacements = [{ old_text: noopAnchor, new_text: noopAnchor, selected_element_index: 0 }]
 
-    // selected_elements: vazio para não-execução (evita seleção involuntária)
+    // selected_elements: vazio para não-execução
     const selectedElementsForPayload = chatOnly ? [] : normalizedSelected
 
     // message: vazia quando arquivo subiu; documento como fallback
