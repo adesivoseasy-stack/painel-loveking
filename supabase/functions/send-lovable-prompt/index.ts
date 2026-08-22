@@ -814,7 +814,7 @@ serve(async (req) => {
 
     void brandedText
 
-    console.log(`[send-lovable-prompt] Sending to Lovable project: ${projectId}; mode=visual_edit${questionOnly ? '_question_noop' : ''}; images=${uploadedImages.length}; zips=${uploadedZips.length}; files=${files.length}`)
+    console.log(`[send-lovable-prompt] Sending to Lovable project: ${projectId}; mode=${mode}; confidence=${confidence}; promptUploaded=${promptUploaded}; images=${uploadedImages.length}; zips=${uploadedZips.length}; files=${filesWithPrompt.length}`)
 
     const response = await fetch(`https://api.lovable.dev/projects/${encodeURIComponent(projectId)}/chat`, {
       method: 'POST',
